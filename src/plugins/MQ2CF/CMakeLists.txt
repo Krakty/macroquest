@@ -16,6 +16,11 @@ find_package(unofficial-sqlite3 REQUIRED)
 set(MQ2CF_HEADERS
     "core/LuaBindings.h"
     "core/SpawnPrimitives.h"
+    "core/SpellData.h"
+    "core/GroupEngine.h"
+    "core/LocalPlayer.h"
+    "core/TargetValidation.h"
+    "core/CastEngine.h"
 )
 
 source_groups("Header Files" ${MQ2CF_HEADERS})
@@ -27,12 +32,12 @@ set(MQ2CF_SOURCES
     "MQ2CF.cpp"
     "core/LuaBindings.cpp"
     "core/SpawnPrimitives.cpp"
+    "core/SpellData.cpp"
+    "core/GroupEngine.cpp"
+    "core/LocalPlayer.cpp"
+    "core/TargetValidation.cpp"
+    "core/CastEngine.cpp"
     # Core subsystems (Phase 2+)
-    # "core/LocalPlayer.cpp"
-    # "core/SpellData.cpp"
-    # "core/CastEngine.cpp"
-    # "core/TargetValidation.cpp"
-    # "core/GroupEngine.cpp"
     # "core/BuffEngine.cpp"
     # "core/CCEngine.cpp"
     # "core/SongEngine.cpp"

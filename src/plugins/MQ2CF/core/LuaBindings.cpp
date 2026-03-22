@@ -33,9 +33,16 @@ static void RegisterUtilBindings(sol::table& core)
 	util.set_function("WriteChatf", [](const std::string& msg) {
 		WriteChatf("%s", msg.c_str());
 	});
+
+	util.set_function("GetResourcePath", []() -> std::string {
+		return std::string(gPathResources);
+	});
 }
 
-// Core.Spawn bindings are in SpawnPrimitives.cpp
+// Subsystem bindings in separate files:
+// Core.Spawn  -> SpawnPrimitives.cpp
+// Core.Spell  -> SpellData.cpp
+// Core.Group  -> GroupEngine.cpp
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -47,6 +54,11 @@ void RegisterLuaBindings(sol::state& lua)
 
 	RegisterUtilBindings(core);
 	RegisterSpawnBindings(core);
+	RegisterSpellBindings(core);
+	RegisterGroupBindings(core);
+	RegisterLocalPlayerBindings(core);
+	RegisterTargetBindings(core);
+	RegisterCastBindings(core);
 }
 
 } // namespace CF
