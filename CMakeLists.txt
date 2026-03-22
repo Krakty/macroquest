@@ -125,6 +125,7 @@ set(MQ_PLUGIN_SUBDIRS
     "src/plugins/targetinfo"
     "src/plugins/xtarinfo"
     "src/plugins/MQ2CF"
+    "plugins/MQ2EQBC"
 )
 
 set(MQ_TEST_SUBDIRS
