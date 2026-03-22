@@ -1,0 +1,44 @@
+# Compute the installation prefix relative to this file.
+get_filename_component(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+if(_IMPORT_PREFIX STREQUAL "/")
+  set(_IMPORT_PREFIX "")
+endif()
+
+add_library(crashpad INTERFACE)
+add_library(crashpad::crashpad ALIAS crashpad)
+
+set(CRASHPAD_LIBRARIES common client util base)
+
+if(WIN32)
+	target_compile_definitions(crashpad INTERFACE NOMINMAX)
+elseif(APPLE)
+	list(APPEND CRASHPAD_LIBRARIES ApplicationServices
+        CoreFoundation Foundation IOKit Security bsm mig_output)
+endif()
+
+foreach(LIB_NAME ${CRASHPAD_LIBRARIES})
+  find_library(_LIB_RELEASE ${LIB_NAME} PATHS "${_IMPORT_PREFIX}/lib" NO_DEFAULT_PATH)
+  find_library(_LIB_DEBUG ${LIB_NAME} PATHS "${_IMPORT_PREFIX}/debug/lib" NO_DEFAULT_PATH)
+  if(_LIB_RELEASE AND _LIB_DEBUG)
+    target_link_libraries(crashpad INTERFACE
+      $<$<CONFIG:Debug>:${_LIB_DEBUG}>
+      $<$<NOT:$<CONFIG:Debug>>:${_LIB_RELEASE}>)
+  elseif(_LIB_RELEASE)
+    target_link_libraries(crashpad INTERFACE ${_LIB_RELEASE})
+  elseif(_LIB_DEBUG)
+    target_link_libraries(crashpad INTERFACE ${_LIB_DEBUG})
+  else()
+    # System library (e.g. ApplicationServices on macOS)
+    target_link_libraries(crashpad INTERFACE ${LIB_NAME})
+  endif()
+  unset(_LIB_RELEASE CACHE)
+  unset(_LIB_DEBUG CACHE)
+endforeach()
+
+find_package(ZLIB REQUIRED)
+target_link_libraries(crashpad INTERFACE ZLIB::ZLIB)
+
+target_include_directories(crashpad 
+        INTERFACE ${_IMPORT_PREFIX}/include/crashpad)
