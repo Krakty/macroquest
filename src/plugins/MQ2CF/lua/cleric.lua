@@ -7,6 +7,9 @@
 
 local Cleric = {}
 
+-- Track whether we have printed the init message
+local initPrinted = false
+
 -- Settings defaults (loaded from INI/SQLite, these are fallbacks)
 Cleric.Settings = {
     -- Heal thresholds
@@ -39,6 +42,14 @@ Cleric.Settings = {
 }
 
 function Cleric.OnPulse()
+    -- Print init message once on first pulse
+    if not initPrinted then
+        local gameState = Core.Util.GetGameState()
+        local name = Core.Spawn.GetLocalName()
+        Core.Util.WriteChatf("\ag[MQ2CF]\ax Cleric module loaded (player: " .. name .. ", state: " .. tostring(gameState) .. ")")
+        initPrinted = true
+    end
+
     -- TODO Phase 3: Implement heal triage
     -- 1. Check if we should heal (not paused, not casting, in combat)
     -- 2. Get heal target via Core.Group.GetHealTarget()
@@ -47,7 +58,8 @@ function Cleric.OnPulse()
 end
 
 function Cleric.OnZoned()
-    -- TODO: Reset state on zone change
+    -- Reset state on zone change
+    initPrinted = false
 end
 
 return Cleric

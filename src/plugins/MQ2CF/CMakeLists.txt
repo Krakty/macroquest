@@ -4,11 +4,28 @@
 include("../../Plugin.cmake")
 
 # ---------------------------------------------------------------------
+# vcpkg dependencies
+# ---------------------------------------------------------------------
+find_package(luajit REQUIRED)
+find_package(sol2 REQUIRED)
+find_package(unofficial-sqlite3 REQUIRED)
+
+# ---------------------------------------------------------------------
+# Header files
+# ---------------------------------------------------------------------
+set(MQ2CF_HEADERS
+    "core/LuaBindings.h"
+)
+
+source_groups("Header Files" ${MQ2CF_HEADERS})
+
+# ---------------------------------------------------------------------
 # Source files
 # ---------------------------------------------------------------------
 set(MQ2CF_SOURCES
     "MQ2CF.cpp"
-    # Core subsystems (Phase 1+)
+    "core/LuaBindings.cpp"
+    # Core subsystems (Phase 2+)
     # "core/SpawnPrimitives.cpp"
     # "core/LocalPlayer.cpp"
     # "core/SpellData.cpp"
@@ -31,7 +48,10 @@ source_groups("Source Files" ${MQ2CF_SOURCES})
 # ---------------------------------------------------------------------
 # Target definition
 # ---------------------------------------------------------------------
-add_library(MQ2CF SHARED ${MQ2CF_SOURCES})
+add_library(MQ2CF SHARED
+    ${MQ2CF_HEADERS}
+    ${MQ2CF_SOURCES}
+)
 
 set_target_properties(MQ2CF PROPERTIES FOLDER "plugins")
 
@@ -41,11 +61,36 @@ set_target_properties(MQ2CF PROPERTIES FOLDER "plugins")
 target_Plugin_props(MQ2CF)
 
 # ---------------------------------------------------------------------
-# Dependencies
+# Link vcpkg dependencies
+# ---------------------------------------------------------------------
+target_link_libraries(MQ2CF PRIVATE
+    luajit::luajit
+    sol2
+    unofficial::sqlite3::sqlite3
+)
+
+# ---------------------------------------------------------------------
+# Project dependencies
 # ---------------------------------------------------------------------
 target_link_libraries(MQ2CF PRIVATE MQ2Main)
 
-# TODO Phase 1: Add sol2 and SQLite3 dependencies
-# find_package(Lua REQUIRED)
-# target_link_libraries(MQ2CF PRIVATE ${LUA_LIBRARIES} sqlite3)
-# target_include_directories(MQ2CF PRIVATE ${LUA_INCLUDE_DIR})
+# ---------------------------------------------------------------------
+# Preprocessor definitions
+# ---------------------------------------------------------------------
+target_compile_definitions(MQ2CF PRIVATE
+    "SOL_LUAJIT=1"
+)
+
+# ---------------------------------------------------------------------
+# Include directories
+# ---------------------------------------------------------------------
+target_include_directories(MQ2CF PRIVATE
+    "${CMAKE_CURRENT_LIST_DIR}/"
+)
+
+# ---------------------------------------------------------------------
+# Compiler options
+# ---------------------------------------------------------------------
+target_compile_options(MQ2CF PRIVATE
+    "/bigobj"
+)
