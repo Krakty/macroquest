@@ -279,6 +279,8 @@ function(create_vcpkg_overlays)
     )
 
     # Format overlay ports path as JSON array, always include our project-level custom ports
+    # Include vcpkg/ports so local port fixes override the upstream registry
+    list(APPEND PORT_DIRS "${CMAKE_SOURCE_DIR}/contrib/vcpkg/ports")
     list(APPEND PORT_DIRS "${CMAKE_SOURCE_DIR}/contrib/vcpkg-ports")
     format_list_as_json("${PORT_DIRS}" VCPKG_OVERLAY_PORTS_PATH)
     configure_file(
