@@ -145,7 +145,7 @@ macro(target_Common_props TARGET_NAME)
         "/GS-"
         "$<$<CONFIG:Debug>:/Od>"
         "/MP"
-        "/std:c++17"
+        "/std:c++20"
     )
     
     # ---------------------------------------------------------------------
