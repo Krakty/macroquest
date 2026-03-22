@@ -164,8 +164,45 @@ static void CmdCF(SPAWNINFO* pSpawn, char* szLine)
 		return;
 	}
 
+	if (ci_equals(arg, "test"))
+	{
+		if (!s_luaReady)
+		{
+			WriteChatf("\ar[MQ2CF]\ax Lua not ready");
+			return;
+		}
+
+		// Load test harness if not already loaded
+		std::string testPath = s_luaDir + "\\test_harness.lua";
+		auto loadResult = s_lua->safe_script_file(testPath, sol::script_pass_on_error);
+		if (!loadResult.valid())
+		{
+			sol::error err = loadResult;
+			WriteChatf("\ar[MQ2CF]\ax Failed to load test harness: %s", err.what());
+			return;
+		}
+
+		// Get optional subsystem argument
+		char arg2[MAX_STRING] = { 0 };
+		GetArg(arg2, szLine, 2);
+
+		// Run tests
+		sol::table testModule = loadResult;
+		sol::function runFn = testModule["run"];
+		if (runFn.valid())
+		{
+			auto result = runFn(arg2[0] ? arg2 : "all");
+			if (!result.valid())
+			{
+				sol::error err = result;
+				WriteChatf("\ar[MQ2CF]\ax Test error: %s", err.what());
+			}
+		}
+		return;
+	}
+
 	WriteChatf("\ar[MQ2CF]\ax Unknown subcommand: %s", arg);
-	WriteChatf("  Usage: /cf [status|reload]");
+	WriteChatf("  Usage: /cf [status|reload|test [subsystem]]");
 }
 
 // ---------------------------------------------------------------------------

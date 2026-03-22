@@ -35,32 +35,7 @@ static void RegisterUtilBindings(sol::table& core)
 	});
 }
 
-// ---------------------------------------------------------------------------
-// Core.Spawn bindings
-// ---------------------------------------------------------------------------
-static void RegisterSpawnBindings(sol::table& core)
-{
-	sol::table spawn = core["Spawn"].get_or_create<sol::table>();
-
-	spawn.set_function("GetName", [](int spawnId) -> std::string {
-		SPAWNINFO* pSpawn = GetSpawnByID(spawnId);
-		if (pSpawn)
-			return pSpawn->Name;
-		return "";
-	});
-
-	spawn.set_function("GetLocalName", []() -> std::string {
-		if (pLocalPlayer)
-			return pLocalPlayer->Name;
-		return "";
-	});
-
-	spawn.set_function("GetLocalId", []() -> int {
-		if (pLocalPlayer)
-			return pLocalPlayer->SpawnID;
-		return 0;
-	});
-}
+// Core.Spawn bindings are in SpawnPrimitives.cpp
 
 // ---------------------------------------------------------------------------
 // Public API
