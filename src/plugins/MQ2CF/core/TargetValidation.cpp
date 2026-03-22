@@ -70,7 +70,8 @@ void RegisterTargetBindings(sol::table& core)
 
 		case 41: // Undead
 			// Target must be undead body type
-			return (pTarget->BodyType == 1);
+			// TODO: BodyType removed from PlayerClient in current eqlib, needs alternative check
+		return false;
 
 		case 6:  // Self
 			// Must be local player
@@ -158,7 +159,8 @@ void RegisterTargetBindings(sol::table& core)
 		PlayerClient* pSpawn = FindSpawn(spawnId);
 		if (!pSpawn)
 			return false;
-		return pSpawn->BodyType == 1; // Undead body type
+		// TODO: BodyType removed from PlayerClient in current eqlib, needs alternative check
+		return false;
 	});
 }
 

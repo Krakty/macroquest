@@ -94,7 +94,7 @@ static std::tuple<bool, std::string> DoValidateCast(int spellId, int targetSpawn
 	}
 
 	// h. Mana check
-	if (pLocalPC && pSpell->ManaCost > pLocalPC->ManaCurrent)
+	if (pLocalPlayer && pSpell->ManaCost > pLocalPlayer->GetCurrentMana())
 		return std::make_tuple(false, "mana");
 
 	// i. Find gem slot
@@ -106,7 +106,7 @@ static std::tuple<bool, std::string> DoValidateCast(int spellId, int targetSpawn
 	PcProfile* pProfile = pLocalPC->GetCurrentPcProfile();
 	if (pProfile)
 	{
-		if (pProfile->GetSpellGemTimer(gemSlot) > 0)
+		if (pProfile->SpellRecastTimer[gemSlot] > 0)
 			return std::make_tuple(false, "gem_cooldown");
 	}
 
@@ -180,12 +180,9 @@ void RegisterCastBindings(sol::table& core)
 	// -- Recovery -----------------------------------------------------------
 
 	cast.set_function("IsGlobalRecovery", []() -> bool {
-		if (!pLocalPC)
+		if (!pLocalPlayer)
 			return false;
-		PcProfile* pProfile = pLocalPC->GetCurrentPcProfile();
-		if (!pProfile)
-			return false;
-		return pProfile->GetCastRecoveryTimer() > 0;
+		return pLocalPlayer->CastingData.SpellETA > EQGetTime();
 	});
 
 	cast.set_function("GetGemReadyIn", [](int gemSlot) -> int {
@@ -196,7 +193,7 @@ void RegisterCastBindings(sol::table& core)
 		PcProfile* pProfile = pLocalPC->GetCurrentPcProfile();
 		if (!pProfile)
 			return 0;
-		return static_cast<int>(pProfile->GetSpellGemTimer(gemSlot));
+		return static_cast<int>(pProfile->SpellRecastTimer[gemSlot]);
 	});
 }
 

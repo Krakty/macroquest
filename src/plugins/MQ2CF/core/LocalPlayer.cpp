@@ -51,26 +51,26 @@ void RegisterLocalPlayerBindings(sol::table& core)
 	// -- Mana / Endurance --------------------------------------------------
 
 	localPlayer.set_function("GetMana", []() -> int {
-		if (pLocalPC)
-			return pLocalPC->ManaCurrent;
+		if (pLocalPlayer)
+			return pLocalPlayer->GetCurrentMana();
 		return 0;
 	});
 
 	localPlayer.set_function("GetManaMax", []() -> int {
-		if (pLocalPC)
-			return pLocalPC->ManaMax;
+		if (pLocalPlayer)
+			return pLocalPlayer->GetMaxMana();
 		return 0;
 	});
 
 	localPlayer.set_function("GetEndurance", []() -> int {
-		if (pLocalPC)
-			return pLocalPC->EnduranceCurrent;
+		if (pLocalPlayer)
+			return pLocalPlayer->GetCurrentEndurance();
 		return 0;
 	});
 
 	localPlayer.set_function("GetEnduranceMax", []() -> int {
-		if (pLocalPC)
-			return static_cast<int>(pLocalPC->EnduranceMax);
+		if (pLocalPlayer)
+			return pLocalPlayer->GetMaxEndurance();
 		return 0;
 	});
 
@@ -91,7 +91,7 @@ void RegisterLocalPlayerBindings(sol::table& core)
 		PcProfile* pProfile = GetLocalProfile();
 		if (!pProfile)
 			return false;
-		return pProfile->GetSpellGemTimer(gemSlot) == 0;
+		return pProfile->SpellRecastTimer[gemSlot] == 0;
 	});
 
 	// -- Casting -----------------------------------------------------------
@@ -100,14 +100,16 @@ void RegisterLocalPlayerBindings(sol::table& core)
 		PcProfile* pProfile = GetLocalProfile();
 		if (!pProfile)
 			return 0;
-		return static_cast<int>(pProfile->GetCastRecoveryTimer());
+		// Use pChar cast time if available
+		if (pLocalPlayer && pLocalPlayer->CastingData.SpellETA > 0)
+			return static_cast<int>(pLocalPlayer->CastingData.SpellETA - EQGetTime());
+		return 0;
 	});
 
 	localPlayer.set_function("IsInCastRecovery", []() -> bool {
-		PcProfile* pProfile = GetLocalProfile();
-		if (!pProfile)
-			return false;
-		return pProfile->GetCastRecoveryTimer() > 0;
+		if (pLocalPlayer && pLocalPlayer->CastingData.SpellETA > 0)
+			return pLocalPlayer->CastingData.SpellETA > EQGetTime();
+		return false;
 	});
 
 	// -- Group assist ------------------------------------------------------
