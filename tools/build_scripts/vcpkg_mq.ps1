@@ -39,11 +39,14 @@ Param (
 $env:VCPKG_FORCE_DOWNLOADED_BINARIES = "1"
 
 $vcpkg_root = "$MQRoot\contrib\vcpkg"
+$vcpkg_overlay_ports = "$MQRoot\contrib\vcpkg-overlays\msbuild"
+$vcpkg_overlay_triplets = "$MQRoot\contrib\vcpkg-overlays\triplets"
+$vcpkg_use_overlays = $false
 $vcpkg_triplet = "$Platform-windows-static"
 $vcpkg_mq_file = "vcpkg_mq.txt"
 $vcpkg_mq_file_platform = "vcpkg_mq_$Platform.txt"
 
-$vcpkg_last_bootstrap_file = "vcpkg_mq_last_bootstrap-$Platform.txt"
+$vcpkg_last_bootstrap_file = "$MQRoot\contrib\vcpkg-overlays\msbuild\vcpkg_mq_last_bootstrap-$Platform.txt"
 
 function Wait-Process {
     [CmdletBinding()]
@@ -108,14 +111,23 @@ if (-Not (Test-Path -Path "$vcpkg_root" -PathType Container))
 }
 
 # The vcpkg_mq file might override this, but at least check the defaults
-$tripletFile = "$vcpkg_root\triplets\$vcpkg_triplet.cmake"
+$tripletFile = "$vcpkg_overlay_triplets\$vcpkg_triplet.cmake"
+if (-Not $vcpkg_use_overlays)
+{
+    $tripletFile = "$vcpkg_root\triplets\$vcpkg_triplet.cmake"
+}
 if (-Not (Test-Path -Path "$tripletFile" -PathType Leaf))
 {
-    $tripletFile = "$vcpkg_root\triplets\community\$vcpkg_triplet.cmake"
+    # We end up testing this twice if we're not using overlays, but that's okay.
+    $tripletFile = "$vcpkg_root\triplets\$vcpkg_triplet.cmake"
     if (-Not (Test-Path -Path "$tripletFile" -PathType Leaf))
     {
-        Write-Error "VCPKG Default Triplet not found: $vcpkg_triplet"
-        exit 1
+        $tripletFile = "$vcpkg_root\triplets\community\$vcpkg_triplet.cmake"
+        if (-Not (Test-Path -Path "$tripletFile" -PathType Leaf))
+        {
+            Write-Error "VCPKG Default Triplet not found: $vcpkg_triplet"
+            exit 1
+        }
     }
 }
 
@@ -180,7 +192,7 @@ if (-Not (Test-Path "./vcpkg.exe")) {
 }
 elseif ($gitAvailable) {
     $currentCommit = git rev-parse HEAD
-    if (-Not ((Test-Path -Path "./$vcpkg_last_bootstrap_file") -And ($currentCommit -eq (Get-Content -Path "./$vcpkg_last_bootstrap_file" -TotalCount 1)))) {
+    if (-Not ((Test-Path -Path "$vcpkg_last_bootstrap_file") -And ($currentCommit -eq (Get-Content -Path "$vcpkg_last_bootstrap_file" -TotalCount 1)))) {
         $performBootstrap = $true
     }
 }
@@ -189,7 +201,7 @@ if ($performBootstrap) {
     RunPreCheck
     & "./bootstrap-vcpkg.bat"
     if ($gitAvailable -AND $LASTEXITCODE -eq 0) {
-        $currentCommit | Out-File "./$vcpkg_last_bootstrap_file" -NoNewline
+        $currentCommit | Out-File "$vcpkg_last_bootstrap_file" -NoNewline
     }
 }
 
@@ -270,11 +282,15 @@ foreach ($triplet in $tripletsToCheck) {
 
 # If we did a bootstrap and we already had installed packages
 if ($performBootstrap -And $vcpkgTable.Count -ne 0) {
-    & ./vcpkg.exe upgrade --no-dry-run
+    if ($vcpkg_use_overlays) {
+        & ./vcpkg.exe upgrade --no-dry-run --overlay-ports="$vcpkg_overlay_ports" --overlay-triplets="$vcpkg_overlay_triplets"
+    } else {
+        & ./vcpkg.exe upgrade --no-dry-run
+    }
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "vcpkg upgrade failed - your vcpkg installation may need to be manually fixed. Save this log before trying again."
         # if the upgrade failed, the bootstrap file should show accordingly
-        "Upgrade Error" | Out-File "./$vcpkg_last_bootstrap_file" -NoNewline
+        "Upgrade Error" | Out-File "$vcpkg_last_bootstrap_file" -NoNewline
         # Attempt automatic cleanup
         Write-Warning "vcpkg is now attempting to remove outdated packages"
         & ./vcpkg.exe remove --outdated --recurse
@@ -352,7 +368,11 @@ foreach ($file in $vcpkg_file_list) {
 
 if ($vcpkgInstallTable.Count -ne 0) {
     RunPreCheck
-    $vcpkg_command = "install --x-wait-for-lock"
+    if ($vcpkg_use_overlays) {
+        $vcpkg_command = "install --x-wait-for-lock --overlay-ports=`"$vcpkg_overlay_ports`" --overlay-triplets=`"$vcpkg_overlay_triplets`""
+    } else {
+        $vcpkg_command = "install --x-wait-for-lock"
+    }
     foreach ($triplet in $vcpkgInstallTable.GetEnumerator()) {
         if ($triplet.Value.Count -ne 0) {
             foreach ($node in $triplet.Value.GetEnumerator()) {
