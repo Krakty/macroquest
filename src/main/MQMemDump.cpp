@@ -17,6 +17,19 @@ static int s_recordInterval = 0;  // ticks between dumps
 static int s_recordTick = 0;
 static char s_recordTag[64] = { 0 };
 
+static bool DumpRegion(const void* base, size_t size, const char* filePath)
+{
+	FILE* f = nullptr;
+	fopen_s(&f, filePath, "wb");
+	if (f)
+	{
+		fwrite(base, 1, size, f);
+		fclose(f);
+		return true;
+	}
+	return false;
+}
+
 static void DumpSpawn(const char* tag)
 {
 	PlayerClient* pPlayer = pLocalPlayer;
@@ -29,19 +42,107 @@ static void DumpSpawn(const char* tag)
 	char filePath[MAX_PATH];
 	sprintf_s(filePath, "%s\\memdump_spawn_%s.bin", mq::internal_paths::Logs.c_str(), tag);
 
-	FILE* f = nullptr;
-	fopen_s(&f, filePath, "wb");
-	if (f)
+	size_t dumpSize = 0x2200;
+	if (DumpRegion(pPlayer, dumpSize, filePath))
 	{
-		size_t dumpSize = 0x2200;
-		fwrite(pPlayer, 1, dumpSize, f);
-		fclose(f);
-		WriteChatf("\ag[MemDump]\ax Spawn dumped: %s", filePath);
+		WriteChatf("\ag[MemDump]\ax Spawn dumped: 0x%llX (%zu bytes) -> %s",
+			(uintptr_t)pPlayer, dumpSize, filePath);
 	}
 	else
 	{
 		WriteChatf("\ar[MemDump]\ax Failed to open %s", filePath);
 	}
+}
+
+static void DumpCZC(const char* tag)
+{
+	PlayerClient* pPlayer = pLocalPlayer;
+	if (!pPlayer)
+	{
+		WriteChatf("\ar[MemDump]\ax Not in game");
+		return;
+	}
+
+	// pCharacter is at offset 0x4F8 from pLocalPlayer
+	uintptr_t pCharPtr = *(uintptr_t*)((char*)pPlayer + 0x4F8);
+	if (!pCharPtr)
+	{
+		WriteChatf("\ar[MemDump]\ax pCharacter is null (offset 0x4F8 from pLocalPlayer)");
+		return;
+	}
+
+	char filePath[MAX_PATH];
+	sprintf_s(filePath, "%s\\memdump_czc_%s.bin", mq::internal_paths::Logs.c_str(), tag);
+
+	size_t dumpSize = 0x4000;
+	if (DumpRegion((void*)pCharPtr, dumpSize, filePath))
+	{
+		WriteChatf("\ag[MemDump]\ax CZC dumped: 0x%llX (%zu bytes) -> %s",
+			pCharPtr, dumpSize, filePath);
+	}
+	else
+	{
+		WriteChatf("\ar[MemDump]\ax Failed to open %s", filePath);
+	}
+}
+
+static void DumpActor(const char* tag)
+{
+	PlayerClient* pPlayer = pLocalPlayer;
+	if (!pPlayer)
+	{
+		WriteChatf("\ar[MemDump]\ax Not in game");
+		return;
+	}
+
+	// ActorClient is at offset 0xFE0 from pLocalPlayer
+	void* pActor = (char*)pPlayer + 0xFE0;
+
+	char filePath[MAX_PATH];
+	sprintf_s(filePath, "%s\\memdump_actor_%s.bin", mq::internal_paths::Logs.c_str(), tag);
+
+	size_t dumpSize = 0x300;
+	if (DumpRegion(pActor, dumpSize, filePath))
+	{
+		WriteChatf("\ag[MemDump]\ax Actor dumped: 0x%llX (%zu bytes) -> %s",
+			(uintptr_t)pActor, dumpSize, filePath);
+	}
+	else
+	{
+		WriteChatf("\ar[MemDump]\ax Failed to open %s", filePath);
+	}
+}
+
+static void DumpGroup(const char* tag)
+{
+	if (!pLocalPC)
+	{
+		WriteChatf("\ar[MemDump]\ax pLocalPC is null");
+		return;
+	}
+
+	char filePath[MAX_PATH];
+	sprintf_s(filePath, "%s\\memdump_group_%s.bin", mq::internal_paths::Logs.c_str(), tag);
+
+	size_t dumpSize = 0x4000;
+	if (DumpRegion(pLocalPC, dumpSize, filePath))
+	{
+		WriteChatf("\ag[MemDump]\ax Group (PcClient) dumped: 0x%llX (%zu bytes) -> %s",
+			(uintptr_t)pLocalPC, dumpSize, filePath);
+	}
+	else
+	{
+		WriteChatf("\ar[MemDump]\ax Failed to open %s", filePath);
+	}
+}
+
+static void DumpAll(const char* tag)
+{
+	WriteChatf("\ag[MemDump]\ax Dumping all targets with tag '%s'...", tag);
+	DumpSpawn(tag);
+	DumpCZC(tag);
+	DumpActor(tag);
+	DumpGroup(tag);
 }
 
 static void DumpEqgame()
@@ -59,14 +160,14 @@ static void DumpEqgame()
 		char filePath[MAX_PATH];
 		sprintf_s(filePath, "%s\\memdump_eqgame.bin", mq::internal_paths::Logs.c_str());
 
-		FILE* f = nullptr;
-		fopen_s(&f, filePath, "wb");
-		if (f)
+		if (DumpRegion(modInfo.lpBaseOfDll, modInfo.SizeOfImage, filePath))
 		{
-			fwrite(modInfo.lpBaseOfDll, 1, modInfo.SizeOfImage, f);
-			fclose(f);
 			WriteChatf("\ag[MemDump]\ax eqgame.exe dumped: 0x%llX (%zu bytes) -> %s",
 				(uintptr_t)modInfo.lpBaseOfDll, modInfo.SizeOfImage, filePath);
+		}
+		else
+		{
+			WriteChatf("\ar[MemDump]\ax Failed to open %s", filePath);
 		}
 	}
 }
@@ -81,11 +182,15 @@ static void Cmd_MemDump(PlayerClient* pChar, const char* szLine)
 	if (!szArg[0] || !_stricmp(szArg, "help"))
 	{
 		WriteChatf("\ag[MemDump]\ax Usage:");
-		WriteChatf("  /memdump <tag>              - Single spawn dump");
-		WriteChatf("  /memdump eqgame             - Dump eqgame.exe image");
-		WriteChatf("  /memdump record <tag> [sec]  - Record dumps for N seconds (default 10)");
-		WriteChatf("  /memdump stop                - Stop recording");
-		WriteChatf("  Examples: /memdump falling, /memdump record combat 5");
+		WriteChatf("  /memdump <tag>                - Dump spawn (backward compatible)");
+		WriteChatf("  /memdump spawn <tag>          - Dump spawn (PlayerZoneClient, 0x2200)");
+		WriteChatf("  /memdump czc <tag>            - Dump CharacterZoneClient (0x4000)");
+		WriteChatf("  /memdump actor <tag>          - Dump ActorClient (0x300)");
+		WriteChatf("  /memdump group <tag>          - Dump PcClient/pLocalPC (0x4000)");
+		WriteChatf("  /memdump all <tag>            - Dump all structs");
+		WriteChatf("  /memdump eqgame              - Dump eqgame.exe image");
+		WriteChatf("  /memdump record <tag> [sec]   - Record spawn dumps for N seconds (default 10)");
+		WriteChatf("  /memdump stop                 - Stop recording");
 		return;
 	}
 
@@ -135,6 +240,63 @@ static void Cmd_MemDump(PlayerClient* pChar, const char* szLine)
 		return;
 	}
 
+	// Named subcommands that require a tag
+	if (!_stricmp(szArg, "spawn"))
+	{
+		if (!szArg2[0])
+		{
+			WriteChatf("\ar[MemDump]\ax Need a tag: /memdump spawn <tag>");
+			return;
+		}
+		DumpSpawn(szArg2);
+		return;
+	}
+
+	if (!_stricmp(szArg, "czc"))
+	{
+		if (!szArg2[0])
+		{
+			WriteChatf("\ar[MemDump]\ax Need a tag: /memdump czc <tag>");
+			return;
+		}
+		DumpCZC(szArg2);
+		return;
+	}
+
+	if (!_stricmp(szArg, "actor"))
+	{
+		if (!szArg2[0])
+		{
+			WriteChatf("\ar[MemDump]\ax Need a tag: /memdump actor <tag>");
+			return;
+		}
+		DumpActor(szArg2);
+		return;
+	}
+
+	if (!_stricmp(szArg, "group"))
+	{
+		if (!szArg2[0])
+		{
+			WriteChatf("\ar[MemDump]\ax Need a tag: /memdump group <tag>");
+			return;
+		}
+		DumpGroup(szArg2);
+		return;
+	}
+
+	if (!_stricmp(szArg, "all"))
+	{
+		if (!szArg2[0])
+		{
+			WriteChatf("\ar[MemDump]\ax Need a tag: /memdump all <tag>");
+			return;
+		}
+		DumpAll(szArg2);
+		return;
+	}
+
+	// Default: treat first arg as tag for spawn dump (backward compatible)
 	DumpSpawn(szArg);
 }
 
