@@ -115,6 +115,7 @@ MQModule* GetPostOfficeModule();
 MQModule* GetEmuExtensionsModule();
 #endif
 MQModule* GetDisplayHookModule();
+MQModule* GetMemDumpModule();
 
 void InitializeMQ2AutoInventory();
 void ShutdownMQ2AutoInventory();
@@ -852,6 +853,7 @@ void MacroQuest::Initialize()
 	AddInternalModule(GetItemsModule());
 	AddInternalModule(GetPostOfficeModule());
 	AddInternalModule(GetDisplayHookModule());
+	AddInternalModule(GetMemDumpModule());
 #if IS_EMU_CLIENT
 	AddInternalModule(GetEmuExtensionsModule());
 #endif
