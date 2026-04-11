@@ -125,10 +125,10 @@ static void DumpGroup(const char* tag)
 	sprintf_s(filePath, "%s\\memdump_group_%s.bin", mq::internal_paths::Logs.c_str(), tag);
 
 	size_t dumpSize = 0x4000;
-	if (DumpRegion(pLocalPC, dumpSize, filePath))
+	if (DumpRegion(pLocalPC.get(), dumpSize, filePath))
 	{
 		WriteChatf("\ag[MemDump]\ax Group (PcClient) dumped: 0x%llX (%zu bytes) -> %s",
-			(uintptr_t)pLocalPC, dumpSize, filePath);
+			(uintptr_t)pLocalPC.get(), dumpSize, filePath);
 	}
 	else
 	{
