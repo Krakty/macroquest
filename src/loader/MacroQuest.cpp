@@ -1961,8 +1961,11 @@ int WINAPI CALLBACK WinMain(
 
 	// Update version information shown in the system tray tooltip
 	InitializeVersionInfo();
+	SPDLOG_INFO("DIAG: post InitializeVersionInfo");
 	SetPostOfficeIni(internal_paths::MQini);
+	SPDLOG_INFO("DIAG: post SetPostOfficeIni");
 	SetCrashpadCallback([] { return IsCrashpadInitialized() && gEnableSharedCrashpad ? GetHandlerIPCPipe() : ""; });
+	SPDLOG_INFO("DIAG: post SetCrashpadCallback");
 	SetRequestFocusCallback([](const mq::MQMessageFocusRequest* request)
 		{
 			if (request->focusMode == mq::MQMessageFocusRequest::FocusMode::HasFocus)
@@ -1974,11 +1977,15 @@ int WINAPI CALLBACK WinMain(
 				SetForegroundWindowInternal(static_cast<HWND>(request->hWnd));
 			}
 		});
+	SPDLOG_INFO("DIAG: post SetRequestFocusCallback");
 	// TODO: this can probably be removed?
 	//SetTriggerPostOffice([] { PostMessageA(hMainWnd, WM_USER_CALLBACK, 0, 0); });
 	InitializePostOffice();
+	SPDLOG_INFO("DIAG: post InitializePostOffice");
 	InitializeWindows();
+	SPDLOG_INFO("DIAG: post InitializeWindows");
 	InitializeAutoLogin();
+	SPDLOG_INFO("DIAG: post InitializeAutoLogin");
 
 	auto pids = GetAllEqGameSessions();
 	s_processIds = { begin(pids), end(pids) };
