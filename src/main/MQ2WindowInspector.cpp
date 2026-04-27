@@ -2442,7 +2442,8 @@ public:
 				ColumnCheckBox("Use in horizontal layout", &pWnd->bUseInLayoutHorizontal);
 				ColumnCheckBox("Use in vertical layout", &pWnd->bUseInLayoutVertical);
 				ColumnText("Anchors", "{ top=%d, right=%d, bottom=%d, left=%d }", pWnd->bTopAnchoredToTop, pWnd->bRightAnchoredToLeft, pWnd->bBottomAnchoredToTop, pWnd->bLeftAnchoredToLeft);
-				ColumnText("Offsets", "{ top=%d, right=%d, bottom=%d, left=%d", pWnd->TopOffset, pWnd->RightOffset, pWnd->BottomOffset, pWnd->LeftOffset);
+				// apr15-2026-live: RightOffset removed from CXWnd; use accessor stub (returns 0)
+				ColumnText("Offsets", "{ top=%d, right=%d, bottom=%d, left=%d", pWnd->TopOffset, pWnd->GetRightOffset(), pWnd->BottomOffset, pWnd->LeftOffset);
 
 				// Alpha
 				ColumnCheckBox("Fade enabled", &pWnd->Fades);
@@ -2451,8 +2452,10 @@ public:
 
 				// Mouse over / fading stuff
 				ColumnCheckBox("Faded", &pWnd->Faded);
-				ColumnText("Last time mouse over", "%d", pWnd->LastTimeMouseOver);
-				ColumnText("Fade delay", "%d", pWnd->FadeDelay);
+				// apr15-2026-live: LastTimeMouseOver removed (no apr15 evidence)
+				//ColumnText("Last time mouse over", "%d", pWnd->LastTimeMouseOver);
+				// apr15-2026-live: FadeDelay UNRESOLVED in apr15 layout; accessor stub returns 0
+				ColumnText("Fade delay", "%d", pWnd->GetFadeDelay());
 				ColumnText("Fade duration", "%d", pWnd->FadeDuration);
 				ColumnText("Fade to alpha", "%d", pWnd->FadeToAlpha);
 
@@ -2476,7 +2479,8 @@ public:
 					ColumnText("Last blink fade refresh time", "%d", pWnd->LastBlinkFadeRefreshTime);
 					ColumnText("Blink fade duration", "%d", pWnd->BlinkFadeDuration);
 					ColumnText("Blink fade start time", "%d", pWnd->BlinkFadeStartTime);
-					ColumnText("Blink state", "%d", pWnd->BlinkState);
+					// apr15-2026-live: BlinkState removed (no apr15 evidence at +0x254)
+					//ColumnText("Blink state", "%d", pWnd->BlinkState);
 					ColumnText("Blink start timer", "%d", pWnd->BlinkStartTimer);
 					ColumnText("Blink duration", "%d", pWnd->BlinkDuration);
 
@@ -2501,7 +2505,7 @@ public:
 				ColumnCheckBox("Click Through", &pWnd->bClickThrough);
 				ColumnCheckBox("Click Through (to background)", &pWnd->bClickThroughToBackground);
 				ColumnCheckBox("Click Through Menu Status", &pWnd->bClickThroughMenuItemStatus);
-				ColumnCheckBox("Click Through Menu Enabled", &pWnd->bShowClickThroughMenuItem);
+				// apr15-2026-live: bShowClickThroughMenuItem removed (TransitionRect occupies +0x22c)
 
 				ColumnCheckBox("Capture Events from Title", &pWnd->bCaptureTitle);
 
