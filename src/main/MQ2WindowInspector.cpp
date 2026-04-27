@@ -2472,7 +2472,8 @@ public:
 					ColumnText("Start alpha", "%d", pWnd->StartAlpha);
 					ColumnText("Target alpha", "%d", pWnd->TargetAlpha);
 					ColumnText("Transition start tick", "%d", pWnd->TransitionStartTick);
-					ColumnText("Transition duration", "%d", pWnd->TransitionDuration);
+					// apr15-2026-live: TransitionDuration REMOVED (upstream +0x244 conflicts with verified Tooltip@+0x240..+0x248)
+					//ColumnText("Transition duration", "%d", pWnd->TransitionDuration);
 					ColumnCheckBox("Is transitioning", &pWnd->bIsTransitioning);
 					ColumnText("Transition", "%d", pWnd->Transition);
 					ColumnCXRect("Transition rect", pWnd->TransitionRect);
