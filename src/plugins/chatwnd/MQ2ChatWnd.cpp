@@ -301,10 +301,15 @@ void SaveChatToINI(CSidlScreenWnd* pWindow)
 
 	if (pWindow->IsMinimized())
 	{
-		WritePrivateProfileString(szChatINISection, "ChatTop", std::to_string(pWindow->GetOldLocation().top), INIFileName);
-		WritePrivateProfileString(szChatINISection, "ChatBottom", std::to_string(pWindow->GetOldLocation().bottom), INIFileName);
-		WritePrivateProfileString(szChatINISection, "ChatLeft", std::to_string(pWindow->GetOldLocation().left), INIFileName);
-		WritePrivateProfileString(szChatINISection, "ChatRight", std::to_string(pWindow->GetOldLocation().right), INIFileName);
+		// apr15-2026-live: GetOldLocation REMOVED (OldLocation field at +0x184
+		// conflicts with verified bTopAnchoredToBottom@+0x185 and Location@+0x18c).
+		// Fall back to current Location for the minimized branch — the saved
+		// rect will reflect the minimized rect rather than the pre-minimize
+		// rect until the apr15 OldLocation offset is verified.
+		WritePrivateProfileString(szChatINISection, "ChatTop", std::to_string(pWindow->GetLocation().top), INIFileName);
+		WritePrivateProfileString(szChatINISection, "ChatBottom", std::to_string(pWindow->GetLocation().bottom), INIFileName);
+		WritePrivateProfileString(szChatINISection, "ChatLeft", std::to_string(pWindow->GetLocation().left), INIFileName);
+		WritePrivateProfileString(szChatINISection, "ChatRight", std::to_string(pWindow->GetLocation().right), INIFileName);
 	}
 	else
 	{
