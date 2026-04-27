@@ -144,11 +144,13 @@ public:
 						{
 							pCheck->SetEnabled(true);
 							pCheck->SetCheck(false);
-							pCheck->SetData(list->GetItemData(i));
+							// apr15-2026-live: Data REMOVED (upstream +0x198 conflicts with verified Location@+0x18c..+0x19c)
+							//pCheck->SetData(list->GetItemData(i));
 							pCheck->SetVisible(true);
 							pCheck->SetActive(true);
 							pCheck->pController = nullptr;
-							pCheck->SetShowClickThroughMenuItem(true);
+							// apr15-2026-live: bShowClickThroughMenuItem REMOVED (round-2 forensics: 16-byte CXRect at +0x22c)
+							//pCheck->SetShowClickThroughMenuItem(true);
 							pCheck->SetLocation({ 4, 0, 16, 12 });
 							pCheck->IndicatorVal = 0;
 
@@ -160,7 +162,10 @@ public:
 
 							list->SetItemWnd(i, MarkCol, pCheck);
 
-							ItemGlobalIndex itemIndex = pFIWnd->GetItemGlobalIndex(static_cast<int>(pCheck->GetData()));
+							// apr15-2026-live: GetData REMOVED — Data field at upstream +0x198 conflicts with verified Location@+0x18c..+0x19c.
+							// Use the list row index `i` directly as the GlobalIndex key. The MQ2AutoInventory list is populated
+							// in the same order GetItemGlobalIndex expects, so this preserves the per-row mapping.
+							ItemGlobalIndex itemIndex = pFIWnd->GetItemGlobalIndex(i);
 							if (itemIndex.IsValidIndex())
 							{
 								if (ItemPtr ptr = pLocalPC->GetItemByGlobalIndex(itemIndex))
@@ -914,7 +919,8 @@ static void AddFindItemMenu()
 						pCountLabel->SetTooltip("Shows you how many items you have selected.");
 						pCountLabel->SetWindowText("0/10000");
 						// BackgroundTextureTint
-						pCountLabel->SetBGColor(0xFF2032FF);
+						// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
+						//pCountLabel->SetBGColor(0xFF2032FF);
 					}
 				}
 
@@ -927,7 +933,8 @@ static void AddFindItemMenu()
 						pNLMarkedButton->SetTooltip("Click to tag all marked items as NEVER LOOT in advloot filters.");
 						pNLMarkedButton->SetWindowText("Never Loot");
 						// BackgroundTextureTint
-						pNLMarkedButton->SetBGColor(0xFF2032FF);
+						// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
+						//pNLMarkedButton->SetBGColor(0xFF2032FF);
 					}
 				}
 			}

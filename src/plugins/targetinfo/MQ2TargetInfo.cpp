@@ -232,7 +232,8 @@ CLabelWnd* CreateDistLabel(CXWnd* parent, CControlTemplate* DistLabelTemplate, c
 		pLabel->SetLeftOffset(rect.left);
 		pLabel->SetRightOffset(rect.right);
 		pLabel->SetCRNormal(MQColor(0, 255, 0)); // green
-		pLabel->SetBGColor(MQColor(255, 255, 255));
+		// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
+		//pLabel->SetBGColor(MQColor(255, 255, 255));
 		pLabel->SetTooltip(DistanceLabelToolTip.c_str());
 		pLabel->SetVisible(bShow);
 		pLabel->bNoWrap = true;
@@ -473,7 +474,8 @@ void Initialize()
 
 		if (Target_AggroPctPlayerLabel = (CLabelWnd*)pTargetWnd->GetChildItem("Target_AggroPctPlayerLabel"))
 		{
-			Target_AggroPctPlayerLabel->SetBGColor(0xFF00000);
+			// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
+			//Target_AggroPctPlayerLabel->SetBGColor(0xFF00000);
 			Target_AggroPctPlayerLabel_TopOffsetOrg = Target_AggroPctPlayerLabel->GetTopOffset();
 			Target_AggroPctPlayerLabel->SetTopOffset(dTopOffset);
 			Target_AggroPctPlayerLabel_BottomOffsetOrg = Target_AggroPctPlayerLabel->GetBottomOffset();
@@ -482,7 +484,8 @@ void Initialize()
 
 		if (Target_AggroNameSecondaryLabel = (CLabelWnd*)pTargetWnd->GetChildItem("Target_AggroNameSecondaryLabel"))
 		{
-			Target_AggroNameSecondaryLabel->SetBGColor(0xFF00000);
+			// apr15-2026-live: SetBGColor REMOVED
+			//Target_AggroNameSecondaryLabel->SetBGColor(0xFF00000);
 			Target_AggroNameSecondaryLabel_TopOffsetOrg = Target_AggroNameSecondaryLabel->GetTopOffset();
 			Target_AggroNameSecondaryLabel->SetTopOffset(dTopOffset);
 			Target_AggroNameSecondaryLabel_BottomOffsetOrg = Target_AggroNameSecondaryLabel->GetBottomOffset();
@@ -491,7 +494,8 @@ void Initialize()
 
 		if (Target_AggroPctSecondaryLabel = (CLabelWnd*)pTargetWnd->GetChildItem("Target_AggroPctSecondaryLabel"))
 		{
-			Target_AggroPctSecondaryLabel->SetBGColor(0xFF00000);
+			// apr15-2026-live: SetBGColor REMOVED
+			//Target_AggroPctSecondaryLabel->SetBGColor(0xFF00000);
 			Target_AggroPctSecondaryLabel_TopOffsetOrg = Target_AggroPctSecondaryLabel->GetTopOffset();
 			Target_AggroPctSecondaryLabel->SetTopOffset(dTopOffset);
 			Target_AggroPctSecondaryLabel_BottomOffsetOrg = Target_AggroPctSecondaryLabel->GetBottomOffset();
@@ -500,7 +504,8 @@ void Initialize()
 
 		if (Target_BuffWindow = pTargetWnd->GetChildItem("Target_BuffWindow"))
 		{
-			Target_BuffWindow->SetBGColor(0xFF000000);
+			// apr15-2026-live: SetBGColor REMOVED
+			//Target_BuffWindow->SetBGColor(0xFF000000);
 			Target_BuffWindow_TopOffsetOld = Target_BuffWindow->GetTopOffset();
 			Target_BuffWindow->SetTopOffset(Target_BuffWindow_TopOffset);
 		}
@@ -560,7 +565,8 @@ void Initialize()
 				InfoLabel->SetRightOffset(rect.right);
 
 				InfoLabel->SetCRNormal(MQColor(0, 255, 0));//green
-				InfoLabel->SetBGColor(MQColor(255, 255, 255));
+				// apr15-2026-live: SetBGColor REMOVED
+				//InfoLabel->SetBGColor(MQColor(255, 255, 255));
 				InfoLabel->SetTooltip(szTargetInfo);
 			}
 
@@ -590,7 +596,8 @@ void Initialize()
 				CanSeeLabel->SetLeftOffset(dLeftOffset);
 				CanSeeLabel->SetRightOffset(dLeftOffset);
 				CanSeeLabel->SetCRNormal(0xFF00FF00); // green
-				CanSeeLabel->SetBGColor(0xFFFFFFFF);
+				// apr15-2026-live: SetBGColor REMOVED
+				//CanSeeLabel->SetBGColor(0xFFFFFFFF);
 				CanSeeLabel->SetTooltip(szCanSeeTarget);
 			}
 
@@ -611,7 +618,8 @@ void Initialize()
 				PHButton->SetLocation({ 2, CanSeeTopOffset + 1, 20, PHButton->GetBottomOffset() });
 
 				PHButton->SetCRNormal(0xFF00FFFF); // cyan
-				PHButton->SetBGColor(0xFFFFFFFF);
+				// apr15-2026-live: SetBGColor REMOVED
+				//PHButton->SetBGColor(0xFFFFFFFF);
 				PHButton->SetTooltip(szPHToolTip);
 				PHButton->SetWindowText(szPH);
 			}

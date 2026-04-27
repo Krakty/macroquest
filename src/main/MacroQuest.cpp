@@ -1094,7 +1094,8 @@ public:
 	{
 		AddStyle(CWS_TITLE | CWS_MINIMIZE);
 		RemoveStyle(CWS_TRANSPARENT | CWS_CLOSE);
-		SetBGColor(0xFF000000);
+		// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
+		//SetBGColor(0xFF000000);
 		SetLocation({ 230,620,850,920 });
 		SetWindowText("MacroQuest Recent Changes");
 		SetZLayer(1);

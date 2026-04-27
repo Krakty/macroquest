@@ -2407,13 +2407,16 @@ public:
 			if (ColumnTreeNode("Details", ""))
 			{
 				DisplayDynamicTemplateExpand("TitlePiece 1", pWnd->TitlePiece);
-				DisplayDynamicTemplateExpand("TitlePiece 2", pWnd->TitlePiece2);
+				// apr15-2026-live: TitlePiece2 REMOVED (8B at +0x038 conflicts with bRightAnchoredToRight@+0x3c)
+				//DisplayDynamicTemplateExpand("TitlePiece 2", pWnd->TitlePiece2);
 				DisplayTextObject("Text object", pWnd->pTextObject);
-				DisplayTextObject("Tooltip text object", pWnd->pTipTextObject);
+				// apr15-2026-live: pTipTextObject REMOVED (upstream +0x1a0 conflicts with verified WindowText)
+				//DisplayTextObject("Tooltip text object", pWnd->pTipTextObject);
 				ColumnText("Z layer", "%d", pWnd->ZLayer);
 
 				DisplayTextureAnimation("Icon", static_cast<CTextureAnimation*>(pWnd->IconTextureAnim));
-				ColumnCXRect("Icon rect", pWnd->IconRect);
+				// apr15-2026-live: IconRect REMOVED (upstream +0x15c..+0x16c conflicts with verified XMLToolTip@+0x168)
+				//ColumnCXRect("Icon rect", pWnd->IconRect);
 
 				ColumnCheckBox("Minimized", &pWnd->Minimized);
 				ColumnCheckBox("Maximized", &pWnd->bMaximized);
@@ -2427,22 +2430,25 @@ public:
 				ColumnText("Background type", XWndBackgroundTypeToString(static_cast<XWndBackgroundType>(pWnd->BGType)));
 				ColumnText("Background draw type", XWndBackgroundDrawTypeToString(static_cast<XWndBackgroundDrawType>(pWnd->BackgroundDrawType)));
 				ColumnColor("Normal color", &pWnd->CRNormal);
-				ColumnColor("Background color", &pWnd->BGColor);
+				// apr15-2026-live: BGColor REMOVED (no apr15 offset verified within budget; +0x24c is BlinkFadeDuration)
+				//ColumnColor("Background color", &pWnd->BGColor);
 				ColumnColor<CXWnd>("Disabled background color", pWnd, &CXWnd::GetDisabledBackground, &CXWnd::SetDisabledBackground);
 
 				ColumnCXStr("XML Tooltip", pWnd->XMLToolTip);
 
 				// size
-				ColumnCXSize("Min size", pWnd->MinClientSize);
-				ColumnCXSize("Max size", pWnd->MaxClientSize);
+				// apr15-2026-live: MinClientSize/MaxClientSize REMOVED (conflicts with bFullyScreenClipped/bLeftAnchoredToLeft)
+				//ColumnCXSize("Min size", pWnd->MinClientSize);
+				//ColumnCXSize("Max size", pWnd->MaxClientSize);
 
 				ColumnText("Horizontal scroll", "{ pos=%d, max=%d }", pWnd->HScrollPos, pWnd->HScrollMax);
+				// apr15-2026-live: VScrollMax relocated to +0x078 (UNVERIFIED) — see CXWnd.h note.
 				ColumnText("Vertical scroll", "{ pos=%d, max=%d }", pWnd->VScrollPos, pWnd->VScrollMax);
 
 				ColumnCheckBox("Use in horizontal layout", &pWnd->bUseInLayoutHorizontal);
 				ColumnCheckBox("Use in vertical layout", &pWnd->bUseInLayoutVertical);
 				ColumnText("Anchors", "{ top=%d, right=%d, bottom=%d, left=%d }", pWnd->bTopAnchoredToTop, pWnd->bRightAnchoredToLeft, pWnd->bBottomAnchoredToTop, pWnd->bLeftAnchoredToLeft);
-				// apr15-2026-live: RightOffset removed from CXWnd; use accessor stub (returns 0)
+				// apr15-2026-live: RightOffset VERIFIED at +0x250 (round-2 forensics)
 				ColumnText("Offsets", "{ top=%d, right=%d, bottom=%d, left=%d", pWnd->TopOffset, pWnd->GetRightOffset(), pWnd->BottomOffset, pWnd->LeftOffset);
 
 				// Alpha
@@ -2451,10 +2457,11 @@ public:
 				ColumnText("Current max alpha", "%d", pWnd->Alpha);
 
 				// Mouse over / fading stuff
-				ColumnCheckBox("Faded", &pWnd->Faded);
-				// apr15-2026-live: LastTimeMouseOver removed (no apr15 evidence)
-				//ColumnText("Last time mouse over", "%d", pWnd->LastTimeMouseOver);
-				// apr15-2026-live: FadeDelay UNRESOLVED in apr15 layout; accessor stub returns 0
+				// apr15-2026-live: Faded REMOVED (upstream +0x240 conflicts with verified Tooltip)
+				//ColumnCheckBox("Faded", &pWnd->Faded);
+				// apr15-2026-live: LastTimeMouseOver VERIFIED at +0x1f4 (round-2 forensics)
+				ColumnText("Last time mouse over", "%d", pWnd->LastTimeMouseOver);
+				// apr15-2026-live: FadeDelay VERIFIED at +0x178 (round-2 forensics)
 				ColumnText("Fade delay", "%d", pWnd->GetFadeDelay());
 				ColumnText("Fade duration", "%d", pWnd->FadeDuration);
 				ColumnText("Fade to alpha", "%d", pWnd->FadeToAlpha);
@@ -2479,8 +2486,8 @@ public:
 					ColumnText("Last blink fade refresh time", "%d", pWnd->LastBlinkFadeRefreshTime);
 					ColumnText("Blink fade duration", "%d", pWnd->BlinkFadeDuration);
 					ColumnText("Blink fade start time", "%d", pWnd->BlinkFadeStartTime);
-					// apr15-2026-live: BlinkState removed (no apr15 evidence at +0x254)
-					//ColumnText("Blink state", "%d", pWnd->BlinkState);
+					// apr15-2026-live: BlinkState VERIFIED at +0x224 (round-2 forensics)
+					ColumnText("Blink state", "%d", pWnd->BlinkState);
 					ColumnText("Blink start timer", "%d", pWnd->BlinkStartTimer);
 					ColumnText("Blink duration", "%d", pWnd->BlinkDuration);
 
@@ -2505,7 +2512,7 @@ public:
 				ColumnCheckBox("Click Through", &pWnd->bClickThrough);
 				ColumnCheckBox("Click Through (to background)", &pWnd->bClickThroughToBackground);
 				ColumnCheckBox("Click Through Menu Status", &pWnd->bClickThroughMenuItemStatus);
-				// apr15-2026-live: bShowClickThroughMenuItem removed (TransitionRect occupies +0x22c)
+				// apr15-2026-live: bShowClickThroughMenuItem REMOVED (round-2 forensics: 16-byte CXRect at +0x22c)
 
 				ColumnCheckBox("Capture Events from Title", &pWnd->bCaptureTitle);
 
