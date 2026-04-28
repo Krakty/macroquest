@@ -281,14 +281,13 @@ bool MQ2WindowType::GetMember(MQVarPtr VarPtr, const char* Member, char* Index, 
 		}
 
 		case WindowMethods::SetBGColor:
-			// apr15-2026-live: BGColor REMOVED — no apr15 offset verified within budget.
-			// SetBGColor TLO method now no-ops the color set but still triggers a refade so
-			// callers don't see a hard error from MQ scripts. Re-enable when verified.
+			// apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3)
 			if (Index[0])
 			{
 				try
 				{
-					(void)std::stoul(Index, nullptr, 16);
+					COLORREF color = static_cast<COLORREF>(std::stoul(Index, nullptr, 16));
+					pWnd->SetBGColor(color);
 					pWnd->Refade();
 				}
 				catch (const std::exception&) {}
@@ -498,9 +497,8 @@ bool MQ2WindowType::GetMember(MQVarPtr VarPtr, const char* Member, char* Index, 
 		return true;
 
 	case WindowMembers::BGColor:
-		// apr15-2026-live: BGColor REMOVED (no apr15 offset verified within budget).
-		// Return 0 to keep MQ scripts that read this member from hard-erroring.
-		Dest.DWord = 0;
+		// apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3)
+		Dest.DWord = pWnd->GetBGColor();
 		Dest.Type = pArgbType;
 		return true;
 

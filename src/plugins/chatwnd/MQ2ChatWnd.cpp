@@ -61,13 +61,13 @@ public:
 			s_pendingRemoveStyle = 0;
 		}
 
-		// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
-		//SetBGColor(0xFF000000); // black background
+		// apr15-2026-live: SetBGColor RESTORED at +0x060 (master pass-3)
+		SetBGColor(0xFF000000); // black background
 
 		InputBox = (CEditWnd*)GetChildItem("CW_ChatInput");
 		InputBox->AddStyle(CWS_AUTOVSCROLL | CWS_RELATIVERECT | CWS_BORDER); // 0x800C0;
-		// apr15-2026-live: SetFaded REMOVED (Faded field absent — upstream +0x240 conflicts with verified Tooltip)
-		//SetFaded(false);
+		// apr15-2026-live: SetFaded RESTORED at +0x067 (master pass-3)
+		SetFaded(false);
 		SetEscapable(false);
 		SetAlpha(0xFF);
 		SetBGType(1);
@@ -274,15 +274,14 @@ void LoadChatFromINI(CSidlScreenWnd* pWindow)
 	pWindow->SetAlpha((BYTE)GetPrivateProfileInt(szChatINISection, "Alpha", 255, INIFileName));
 	pWindow->SetFadeToAlpha((BYTE)GetPrivateProfileInt(szChatINISection, "FadeToAlpha", 255, INIFileName));
 	pWindow->SetBGType(GetPrivateProfileInt(szChatINISection, "BGType", 1, INIFileName));
-	// apr15-2026-live: BGColor REMOVED (no apr15 offset verified within budget).
-	// Read INI keys but skip the SetBGColor call. Persist any current 0 default.
+	// apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3)
 	{
 		ARGBCOLOR col = { 0 };
 		col.A = GetPrivateProfileInt(szChatINISection, "BGTint.alpha", 255, INIFileName);
 		col.R = GetPrivateProfileInt(szChatINISection, "BGTint.red", 0, INIFileName);
 		col.G = GetPrivateProfileInt(szChatINISection, "BGTint.green", 0, INIFileName);
 		col.B = GetPrivateProfileInt(szChatINISection, "BGTint.blue", 0, INIFileName);
-		(void)col;
+		pWindow->SetBGColor(col.ARGB);
 	}
 
 	s_fontSize = GetPrivateProfileInt(szChatINISection, "FontSize", 4, INIFileName);
@@ -301,15 +300,11 @@ void SaveChatToINI(CSidlScreenWnd* pWindow)
 
 	if (pWindow->IsMinimized())
 	{
-		// apr15-2026-live: GetOldLocation REMOVED (OldLocation field at +0x184
-		// conflicts with verified bTopAnchoredToBottom@+0x185 and Location@+0x18c).
-		// Fall back to current Location for the minimized branch — the saved
-		// rect will reflect the minimized rect rather than the pre-minimize
-		// rect until the apr15 OldLocation offset is verified.
-		WritePrivateProfileString(szChatINISection, "ChatTop", std::to_string(pWindow->GetLocation().top), INIFileName);
-		WritePrivateProfileString(szChatINISection, "ChatBottom", std::to_string(pWindow->GetLocation().bottom), INIFileName);
-		WritePrivateProfileString(szChatINISection, "ChatLeft", std::to_string(pWindow->GetLocation().left), INIFileName);
-		WritePrivateProfileString(szChatINISection, "ChatRight", std::to_string(pWindow->GetLocation().right), INIFileName);
+		// apr15-2026-live: GetOldLocation RESTORED at +0x1b8 (master pass-3)
+		WritePrivateProfileString(szChatINISection, "ChatTop", std::to_string(pWindow->GetOldLocation().top), INIFileName);
+		WritePrivateProfileString(szChatINISection, "ChatBottom", std::to_string(pWindow->GetOldLocation().bottom), INIFileName);
+		WritePrivateProfileString(szChatINISection, "ChatLeft", std::to_string(pWindow->GetOldLocation().left), INIFileName);
+		WritePrivateProfileString(szChatINISection, "ChatRight", std::to_string(pWindow->GetOldLocation().right), INIFileName);
 	}
 	else
 	{
@@ -324,9 +319,9 @@ void SaveChatToINI(CSidlScreenWnd* pWindow)
 	WritePrivateProfileString(szChatINISection, "Duration", std::to_string(pWindow->GetFadeDuration()), INIFileName);
 	WritePrivateProfileString(szChatINISection, "Alpha", std::to_string(pWindow->GetAlpha()), INIFileName);
 	WritePrivateProfileString(szChatINISection, "FadeToAlpha", std::to_string(pWindow->GetFadeToAlpha()), INIFileName);
-	// apr15-2026-live: BGColor REMOVED — write zeroed BGTint values to keep
-	// the INI schema stable for now. Re-enable real persistence when verified.
+	// apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3)
 	ARGBCOLOR col = { 0 };
+	col.ARGB = pWindow->GetBGColor();
 	WritePrivateProfileString(szChatINISection, "BGType", std::to_string(pWindow->GetBGType()), INIFileName);
 	WritePrivateProfileString(szChatINISection, "BGTint.alpha", std::to_string(col.A), INIFileName);
 	WritePrivateProfileString(szChatINISection, "BGTint.red", std::to_string(col.R), INIFileName);

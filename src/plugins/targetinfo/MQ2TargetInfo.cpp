@@ -232,8 +232,8 @@ CLabelWnd* CreateDistLabel(CXWnd* parent, CControlTemplate* DistLabelTemplate, c
 		pLabel->SetLeftOffset(rect.left);
 		pLabel->SetRightOffset(rect.right);
 		pLabel->SetCRNormal(MQColor(0, 255, 0)); // green
-		// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
-		//pLabel->SetBGColor(MQColor(255, 255, 255));
+		// apr15-2026-live: SetBGColor RESTORED at +0x060 (master pass-3)
+		pLabel->SetBGColor(MQColor(255, 255, 255));
 		pLabel->SetTooltip(DistanceLabelToolTip.c_str());
 		pLabel->SetVisible(bShow);
 		pLabel->bNoWrap = true;
@@ -474,8 +474,8 @@ void Initialize()
 
 		if (Target_AggroPctPlayerLabel = (CLabelWnd*)pTargetWnd->GetChildItem("Target_AggroPctPlayerLabel"))
 		{
-			// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
-			//Target_AggroPctPlayerLabel->SetBGColor(0xFF00000);
+			// apr15-2026-live: SetBGColor RESTORED at +0x060 (master pass-3)
+			Target_AggroPctPlayerLabel->SetBGColor(0xFF00000);
 			Target_AggroPctPlayerLabel_TopOffsetOrg = Target_AggroPctPlayerLabel->GetTopOffset();
 			Target_AggroPctPlayerLabel->SetTopOffset(dTopOffset);
 			Target_AggroPctPlayerLabel_BottomOffsetOrg = Target_AggroPctPlayerLabel->GetBottomOffset();
@@ -484,8 +484,8 @@ void Initialize()
 
 		if (Target_AggroNameSecondaryLabel = (CLabelWnd*)pTargetWnd->GetChildItem("Target_AggroNameSecondaryLabel"))
 		{
-			// apr15-2026-live: SetBGColor REMOVED
-			//Target_AggroNameSecondaryLabel->SetBGColor(0xFF00000);
+			// apr15-2026-live: SetBGColor RESTORED at +0x060 (master pass-3)
+			Target_AggroNameSecondaryLabel->SetBGColor(0xFF00000);
 			Target_AggroNameSecondaryLabel_TopOffsetOrg = Target_AggroNameSecondaryLabel->GetTopOffset();
 			Target_AggroNameSecondaryLabel->SetTopOffset(dTopOffset);
 			Target_AggroNameSecondaryLabel_BottomOffsetOrg = Target_AggroNameSecondaryLabel->GetBottomOffset();
@@ -494,8 +494,8 @@ void Initialize()
 
 		if (Target_AggroPctSecondaryLabel = (CLabelWnd*)pTargetWnd->GetChildItem("Target_AggroPctSecondaryLabel"))
 		{
-			// apr15-2026-live: SetBGColor REMOVED
-			//Target_AggroPctSecondaryLabel->SetBGColor(0xFF00000);
+			// apr15-2026-live: SetBGColor RESTORED at +0x060 (master pass-3)
+			Target_AggroPctSecondaryLabel->SetBGColor(0xFF00000);
 			Target_AggroPctSecondaryLabel_TopOffsetOrg = Target_AggroPctSecondaryLabel->GetTopOffset();
 			Target_AggroPctSecondaryLabel->SetTopOffset(dTopOffset);
 			Target_AggroPctSecondaryLabel_BottomOffsetOrg = Target_AggroPctSecondaryLabel->GetBottomOffset();

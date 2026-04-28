@@ -2119,15 +2119,14 @@ protected:
         OurWnd->SetLocked((GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Locked", 0,    INIFileName) ? true:false));
         OurWnd->SetFadeDelay(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Delay",        2000, INIFileName));
         OurWnd->SetBGType(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGType",       1,    INIFileName));
-        // apr15-2026-live: BGColor REMOVED (no apr15 offset verified within budget).
-        // Read BGTint INI keys but skip the SetBGColor call.
+        // apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3)
         {
             ARGBCOLOR col = {};
             col.A       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.alpha",   255,  INIFileName);
             col.R       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.red",   0,  INIFileName);
             col.G       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.green", 0,  INIFileName);
             col.B       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.blue",  0,  INIFileName);
-            (void)col;
+            OurWnd->SetBGColor(col.ARGB);
         }
 
         NewFont(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "FontSize", 2, INIFileName));
@@ -2154,8 +2153,9 @@ protected:
         WritePrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Locked",       OurWnd->IsLocked(),           INIFileName);
         WritePrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Delay",        OurWnd->GetFadeDelay(),       INIFileName);
         WritePrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGType",       OurWnd->GetBGType(),          INIFileName);
-        // apr15-2026-live: BGColor REMOVED — write zeroed BGTint values to keep INI schema stable
+        // apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3)
         ARGBCOLOR col = { 0 };
+        col.ARGB = OurWnd->GetBGColor();
         WritePrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.alpha", col.A,    INIFileName);
         WritePrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.red",   col.R,    INIFileName);
         WritePrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.green", col.G,    INIFileName);

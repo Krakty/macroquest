@@ -919,8 +919,8 @@ static void AddFindItemMenu()
 						pCountLabel->SetTooltip("Shows you how many items you have selected.");
 						pCountLabel->SetWindowText("0/10000");
 						// BackgroundTextureTint
-						// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
-						//pCountLabel->SetBGColor(0xFF2032FF);
+						// apr15-2026-live: SetBGColor RESTORED at +0x060 (master pass-3)
+						pCountLabel->SetBGColor(0xFF2032FF);
 					}
 				}
 
@@ -933,8 +933,8 @@ static void AddFindItemMenu()
 						pNLMarkedButton->SetTooltip("Click to tag all marked items as NEVER LOOT in advloot filters.");
 						pNLMarkedButton->SetWindowText("Never Loot");
 						// BackgroundTextureTint
-						// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
-						//pNLMarkedButton->SetBGColor(0xFF2032FF);
+						// apr15-2026-live: SetBGColor RESTORED at +0x060 (master pass-3)
+						pNLMarkedButton->SetBGColor(0xFF2032FF);
 					}
 				}
 			}

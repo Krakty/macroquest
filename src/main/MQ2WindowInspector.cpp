@@ -2430,19 +2430,19 @@ public:
 				ColumnText("Background type", XWndBackgroundTypeToString(static_cast<XWndBackgroundType>(pWnd->BGType)));
 				ColumnText("Background draw type", XWndBackgroundDrawTypeToString(static_cast<XWndBackgroundDrawType>(pWnd->BackgroundDrawType)));
 				ColumnColor("Normal color", &pWnd->CRNormal);
-				// apr15-2026-live: BGColor REMOVED (no apr15 offset verified within budget; +0x24c is BlinkFadeDuration)
-				//ColumnColor("Background color", &pWnd->BGColor);
+				// apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3)
+				ColumnColor("Background color", &pWnd->BGColor);
 				ColumnColor<CXWnd>("Disabled background color", pWnd, &CXWnd::GetDisabledBackground, &CXWnd::SetDisabledBackground);
 
 				ColumnCXStr("XML Tooltip", pWnd->XMLToolTip);
 
 				// size
-				// apr15-2026-live: MinClientSize/MaxClientSize REMOVED (conflicts with bFullyScreenClipped/bLeftAnchoredToLeft)
-				//ColumnCXSize("Min size", pWnd->MinClientSize);
-				//ColumnCXSize("Max size", pWnd->MaxClientSize);
+				// apr15-2026-live: MinClientSize/MaxClientSize RESTORED at +0x1ac/+0x0f4 (master pass-3)
+				ColumnCXSize("Min size", pWnd->MinClientSize);
+				ColumnCXSize("Max size", pWnd->MaxClientSize);
 
 				ColumnText("Horizontal scroll", "{ pos=%d, max=%d }", pWnd->HScrollPos, pWnd->HScrollMax);
-				// apr15-2026-live: VScrollMax relocated to +0x078 (UNVERIFIED) — see CXWnd.h note.
+				// apr15-2026-live: VScrollMax VERIFIED at +0x044 (master pass-3)
 				ColumnText("Vertical scroll", "{ pos=%d, max=%d }", pWnd->VScrollPos, pWnd->VScrollMax);
 
 				ColumnCheckBox("Use in horizontal layout", &pWnd->bUseInLayoutHorizontal);
@@ -2457,8 +2457,8 @@ public:
 				ColumnText("Current max alpha", "%d", pWnd->Alpha);
 
 				// Mouse over / fading stuff
-				// apr15-2026-live: Faded REMOVED (upstream +0x240 conflicts with verified Tooltip)
-				//ColumnCheckBox("Faded", &pWnd->Faded);
+				// apr15-2026-live: Faded RESTORED at +0x067 (master pass-3)
+				ColumnCheckBox("Faded", &pWnd->Faded);
 				// apr15-2026-live: LastTimeMouseOver VERIFIED at +0x1f4 (round-2 forensics)
 				ColumnText("Last time mouse over", "%d", pWnd->LastTimeMouseOver);
 				// apr15-2026-live: FadeDelay VERIFIED at +0x178 (round-2 forensics)
@@ -2472,8 +2472,8 @@ public:
 					ColumnText("Start alpha", "%d", pWnd->StartAlpha);
 					ColumnText("Target alpha", "%d", pWnd->TargetAlpha);
 					ColumnText("Transition start tick", "%d", pWnd->TransitionStartTick);
-					// apr15-2026-live: TransitionDuration REMOVED (upstream +0x244 conflicts with verified Tooltip@+0x240..+0x248)
-					//ColumnText("Transition duration", "%d", pWnd->TransitionDuration);
+					// apr15-2026-live: TransitionDuration RESTORED at +0x120 (master pass-3)
+					ColumnText("Transition duration", "%d", pWnd->TransitionDuration);
 					ColumnCheckBox("Is transitioning", &pWnd->bIsTransitioning);
 					ColumnText("Transition", "%d", pWnd->Transition);
 					ColumnCXRect("Transition rect", pWnd->TransitionRect);

@@ -58,8 +58,8 @@ CLabelWnd* CreateDistLabel(CXWnd* parent, CControlTemplate* DistLabelTemplate, c
 		pLabel->SetLeftOffset(rect.left);
 		pLabel->SetRightOffset(rect.right);
 		pLabel->SetCRNormal(MQColor(0, 255, 0)); // green
-		// apr15-2026-live: SetBGColor REMOVED (no apr15 offset verified within budget)
-		//pLabel->SetBGColor(MQColor(255, 255, 255));
+		// apr15-2026-live: SetBGColor RESTORED at +0x060 (master pass-3)
+		pLabel->SetBGColor(MQColor(255, 255, 255));
 		pLabel->SetTooltip(DistanceLabelToolTip.c_str());
 		pLabel->SetVisible(bShow);
 		pLabel->bNoWrap = true;
