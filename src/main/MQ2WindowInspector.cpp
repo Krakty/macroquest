@@ -2418,16 +2418,18 @@ public:
 				// apr15-2026-live: IconRect REMOVED (upstream +0x15c..+0x16c conflicts with verified XMLToolTip@+0x168)
 				//ColumnCXRect("Icon rect", pWnd->IconRect);
 
-				ColumnCheckBox("Minimized", &pWnd->Minimized);
+				// apr15-2026-live: Minimized demoted to NONE_FOUND_apr15_internal at +0x139;
+				// real minimized state is bMinimized at +0x0b8 (forensics/cxwnd_apr15_member_function_sweep.md)
+				ColumnCheckBox("Minimized", &pWnd->bMinimized);
 				ColumnCheckBox("Maximized", &pWnd->bMaximized);
 				ColumnCheckBox("Maximizable", &pWnd->bMaximizable);
 				ColumnCheckBox("Tiled", &pWnd->bTiled);
-				ColumnCheckBox("Action", &pWnd->bAction);
-				ColumnCheckBox("Bring to top when clicked", &pWnd->bBringToTopWhenClicked);
+				// apr15-2026-live: bAction / bBringToTopWhenClicked field declarations not present in apr15 layout
+				//ColumnCheckBox("Action", &pWnd->bAction);
+				//ColumnCheckBox("Bring to top when clicked", &pWnd->bBringToTopWhenClicked);
 				ColumnCheckBox("Mouse over", &pWnd->MouseOver);
 
-				// Background
-				ColumnText("Background type", XWndBackgroundTypeToString(static_cast<XWndBackgroundType>(pWnd->BGType)));
+				// Background — apr15: only BackgroundDrawType exists (BGType renamed in header)
 				ColumnText("Background draw type", XWndBackgroundDrawTypeToString(static_cast<XWndBackgroundDrawType>(pWnd->BackgroundDrawType)));
 				ColumnColor("Normal color", &pWnd->CRNormal);
 				// apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3)
@@ -2474,7 +2476,9 @@ public:
 					ColumnText("Transition start tick", "%d", pWnd->TransitionStartTick);
 					// apr15-2026-live: TransitionDuration RESTORED at +0x120 (master pass-3)
 					ColumnText("Transition duration", "%d", pWnd->TransitionDuration);
-					ColumnCheckBox("Is transitioning", &pWnd->bIsTransitioning);
+					// apr15-2026-live: bIsTransitioning UNFOUND_AFTER_EXHAUSTIVE_SEARCH —
+					// in-transition state encoded as Transition (+0x104) != 0 && != 3
+					ColumnText("Is transitioning", "%s", (pWnd->Transition != 0 && pWnd->Transition != 3) ? "true" : "false");
 					ColumnText("Transition", "%d", pWnd->Transition);
 					ColumnCXRect("Transition rect", pWnd->TransitionRect);
 
@@ -2495,10 +2499,15 @@ public:
 					ImGui::TreePop();
 				}
 
-				ColumnText("Valid", pWnd->ValidCXWnd ? "true" : "false");
+				// apr15-2026-live: ValidCXWnd UNFOUND_AFTER_EXHAUSTIVE_SEARCH (no magic-byte sentinel
+				// observed in any of 9 sampled member functions; possibly compiled-out static class member)
+				//ColumnText("Valid", pWnd->ValidCXWnd ? "true" : "false");
 
-				ColumnCheckBox("Unlockable", &pWnd->Unlockable);
-				ColumnCheckBox("Locked", &pWnd->Locked);
+				// apr15-2026-live: Unlockable UNFOUND_AFTER_EXHAUSTIVE_SEARCH (runtime "unlock" path
+				// absent — ApplyLockedStyle writes +0x9a Locked=1 with no balancing =0 writer)
+				//ColumnCheckBox("Unlockable", &pWnd->Unlockable);
+				// apr15-2026-live: Locked field renamed to bMinimized at +0x0b8 (already shown above as "Minimized")
+				//ColumnCheckBox("Locked", &pWnd->Locked);
 
 				ColumnCheckBox("Keep on screen", &pWnd->bKeepOnScreen);
 				ColumnCheckBox("Clip to parent", &pWnd->bClipToParent);
@@ -2507,15 +2516,21 @@ public:
 				ColumnCheckBox("Escapable", &pWnd->bEscapable);
 				ColumnCheckBox("Escapable locked", &pWnd->bEscapableLocked);
 
+				// apr15-2026-live: bShowBorder/bClickThrough/bClickThroughToBackground are __declspec(property)
+				// accessors over WindowStyle bits CWS_BORDER (0x40) / CWS_TRANSPARENT (0x400) /
+				// CWS_TRANSPARENTCONTROL (0x800000). Cannot take address; use ColumnCheckBoxFlags pattern.
 				ColumnCheckBox("Show Border MenuItem Enabled", &pWnd->bEnableShowBorder);
-				ColumnCheckBox("Show Border", &pWnd->bShowBorder);
+				ColumnCheckBoxFlags("Show Border", &pWnd->WindowStyle, CWS_BORDER);
 
-				ColumnCheckBox("Click Through", &pWnd->bClickThrough);
-				ColumnCheckBox("Click Through (to background)", &pWnd->bClickThroughToBackground);
-				ColumnCheckBox("Click Through Menu Status", &pWnd->bClickThroughMenuItemStatus);
+				ColumnCheckBoxFlags("Click Through", &pWnd->WindowStyle, CWS_TRANSPARENT);
+				ColumnCheckBoxFlags("Click Through (to background)", &pWnd->WindowStyle, CWS_TRANSPARENTCONTROL);
+				// apr15-2026-live: bClickThroughMenuItemStatus field declaration not present in apr15 layout
+				//ColumnCheckBox("Click Through Menu Status", &pWnd->bClickThroughMenuItemStatus);
 				// apr15-2026-live: bShowClickThroughMenuItem REMOVED (round-2 forensics: 16-byte CXRect at +0x22c)
 
-				ColumnCheckBox("Capture Events from Title", &pWnd->bCaptureTitle);
+				// apr15-2026-live: bCaptureTitle UNFOUND_AFTER_EXHAUSTIVE_SEARCH (no titlebar-capture
+				// gate byte — HitTestSubRects gates only on bUsesClassicUI / CWS_NOHITTEST/BORDER bits)
+				//ColumnCheckBox("Capture Events from Title", &pWnd->bCaptureTitle);
 
 				//ColumnText("Resizable mask", "0x%08x", pWnd->bResizableMask);
 				//ColumnCheckBox("Border", &pWnd->bBorder);
