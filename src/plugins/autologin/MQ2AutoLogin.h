@@ -59,9 +59,12 @@ inline T* GetWindow(const std::string& name)
 template <typename T = CXWnd>
 inline T* GetChildWindow(CXWnd* parentWnd, const std::string& child)
 {
-	CXMLDataManager* pXmlMgr = pSidlMgr->GetParamManager();
-	if (pXmlMgr && parentWnd)
-		return static_cast<T*>(parentWnd->GetChildItem(pXmlMgr, CXStr{ child }));
+	// apr15-2026-live: two-arg GetChildItem(CXMLDataManager*, CXStr&) removed
+	// in eqlib (its only caller was the one-arg overload's body). One-arg
+	// version is now thunked to binary's native CXWnd__GetChildItem which
+	// handles XML manager lookup internally.
+	if (parentWnd)
+		return static_cast<T*>(parentWnd->GetChildItem(CXStr{ child }));
 
 	return nullptr;
 }
@@ -93,10 +96,11 @@ inline T* GetActiveWindow(const std::string& name)
 template <typename T = CXWnd>
 inline T* GetActiveChildWindow(CXWnd* parentWnd, const std::string& child)
 {
-	CXMLDataManager* pXmlMgr = pSidlMgr->GetParamManager();
-	if (pXmlMgr && parentWnd)
+	// apr15-2026-live: see GetChildWindow comment — two-arg GetChildItem
+	// removed; one-arg form thunks to binary's native lookup.
+	if (parentWnd)
 	{
-		T* pChild = static_cast<T*>(parentWnd->GetChildItem(pXmlMgr, CXStr{ child }));
+		T* pChild = static_cast<T*>(parentWnd->GetChildItem(CXStr{ child }));
 
 		if (pChild && pChild->IsVisible() && pChild->IsEnabled())
 			return pChild;
