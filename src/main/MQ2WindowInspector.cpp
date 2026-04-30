@@ -2352,7 +2352,8 @@ public:
 					pWnd->Move(positionRect);
 			}
 
-			ColumnCXRect("Client rect", pWnd->ClientRect);
+			// apr15-2026-live: ClientRect field UNFOUND in eqlib::CXWnd (cached at unnamed +0x22c). Use GetClientRect() accessor.
+			ColumnCXRect("Client rect", pWnd->GetClientRect());
 			ColumnCXStr("Text", &pWnd->WindowText);
 			ColumnCXStr("Tooltip", &pWnd->Tooltip);
 			ColumnWindow("Parent", pWnd->ParentWindow);
@@ -2421,7 +2422,8 @@ public:
 				// apr15-2026-live: Minimized demoted to NONE_FOUND_apr15_internal at +0x139;
 				// real minimized state is bMinimized at +0x0b8 (forensics/cxwnd_apr15_member_function_sweep.md)
 				ColumnCheckBox("Minimized", &pWnd->bMinimized);
-				ColumnCheckBox("Maximized", &pWnd->bMaximized);
+				// apr15-2026-live: bMaximized UNFOUND_AFTER_EXHAUSTIVE_SEARCH
+				//ColumnCheckBox("Maximized", &pWnd->bMaximized);
 				ColumnCheckBox("Maximizable", &pWnd->bMaximizable);
 				ColumnCheckBox("Tiled", &pWnd->bTiled);
 				// apr15-2026-live: bAction / bBringToTopWhenClicked field declarations not present in apr15 layout
@@ -2432,8 +2434,9 @@ public:
 				// Background — apr15: only BackgroundDrawType exists (BGType renamed in header)
 				ColumnText("Background draw type", XWndBackgroundDrawTypeToString(static_cast<XWndBackgroundDrawType>(pWnd->BackgroundDrawType)));
 				ColumnColor("Normal color", &pWnd->CRNormal);
-				// apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3)
-				ColumnColor("Background color", &pWnd->BGColor);
+				// apr15-2026-live: BGColor RESTORED at +0x060 (master pass-3, type uint32_t).
+				// ColumnColor expects COLORREF*; reinterpret_cast since both are 4-byte values.
+				ColumnColor("Background color", reinterpret_cast<COLORREF*>(&pWnd->BGColor));
 				ColumnColor<CXWnd>("Disabled background color", pWnd, &CXWnd::GetDisabledBackground, &CXWnd::SetDisabledBackground);
 
 				ColumnCXStr("XML Tooltip", pWnd->XMLToolTip);
@@ -2447,9 +2450,11 @@ public:
 				// apr15-2026-live: VScrollMax VERIFIED at +0x044 (master pass-3)
 				ColumnText("Vertical scroll", "{ pos=%d, max=%d }", pWnd->VScrollPos, pWnd->VScrollMax);
 
-				ColumnCheckBox("Use in horizontal layout", &pWnd->bUseInLayoutHorizontal);
-				ColumnCheckBox("Use in vertical layout", &pWnd->bUseInLayoutVertical);
-				ColumnText("Anchors", "{ top=%d, right=%d, bottom=%d, left=%d }", pWnd->bTopAnchoredToTop, pWnd->bRightAnchoredToLeft, pWnd->bBottomAnchoredToTop, pWnd->bLeftAnchoredToLeft);
+				// apr15-2026-live: bUseInLayoutHorizontal/Vertical UNFOUND_AFTER_EXHAUSTIVE_SEARCH (no CWS_* bit, no separate-byte writers per Batch 11)
+				//ColumnCheckBox("Use in horizontal layout", &pWnd->bUseInLayoutHorizontal);
+				//ColumnCheckBox("Use in vertical layout", &pWnd->bUseInLayoutVertical);
+				// apr15-2026-live: only 5 anchor bytes exist (bTopAnchoredToBottom@+0x185, bBottomAnchoredToTop@+0x186, bBottomAnchoredToBottom@+0x221, bLeftAnchoredToLeft@+0x0fc, bRightAnchoredToRight@+0x03c). Display the apr15-actual set.
+				ColumnText("Anchors", "{ topToBottom=%d, rightToRight=%d, bottomToBottom=%d, leftToLeft=%d, bottomToTop=%d }", pWnd->bTopAnchoredToBottom, pWnd->bRightAnchoredToRight, pWnd->bBottomAnchoredToBottom, pWnd->bLeftAnchoredToLeft, pWnd->bBottomAnchoredToTop);
 				// apr15-2026-live: RightOffset VERIFIED at +0x250 (round-2 forensics)
 				ColumnText("Offsets", "{ top=%d, right=%d, bottom=%d, left=%d", pWnd->TopOffset, pWnd->GetRightOffset(), pWnd->BottomOffset, pWnd->LeftOffset);
 
@@ -2519,7 +2524,8 @@ public:
 				// apr15-2026-live: bShowBorder/bClickThrough/bClickThroughToBackground are __declspec(property)
 				// accessors over WindowStyle bits CWS_BORDER (0x40) / CWS_TRANSPARENT (0x400) /
 				// CWS_TRANSPARENTCONTROL (0x800000). Cannot take address; use ColumnCheckBoxFlags pattern.
-				ColumnCheckBox("Show Border MenuItem Enabled", &pWnd->bEnableShowBorder);
+				// apr15-2026-live: bEnableShowBorder UNFOUND in apr15 layout (no separate gate byte; Show Border is governed solely by CWS_BORDER WindowStyle bit).
+				//ColumnCheckBox("Show Border MenuItem Enabled", &pWnd->bEnableShowBorder);
 				ColumnCheckBoxFlags("Show Border", &pWnd->WindowStyle, CWS_BORDER);
 
 				ColumnCheckBoxFlags("Click Through", &pWnd->WindowStyle, CWS_TRANSPARENT);
@@ -2967,8 +2973,9 @@ public:
 			ColumnCXStr("Last frame label", pWnd->LastFrameName);
 			ColumnText("Last frame time", "%d", pWnd->LastFrameTime);
 			ColumnText("Last frame target", "%d", pWnd->LastFrameTarget);
-			ColumnCXStr("Gauge tooltip", pWnd->GaugeTooltip);
-			ColumnText("Tooltip value", "%d", pWnd->TooltipVal);
+			// apr15-2026-live: GaugeTooltip and TooltipVal UNFOUND in apr15 CGaugeWnd layout (gauge-specific tooltip fields not present)
+			//ColumnCXStr("Gauge tooltip", pWnd->GaugeTooltip);
+			//ColumnText("Tooltip value", "%d", pWnd->TooltipVal);
 
 			// DrawTemplate
 			DisplayTextObject("Text object", pWnd->pTextObject);
