@@ -11,27 +11,25 @@ Dates are EQ patchday dates, not commit dates.
 Pending the next patchday or release/* promotion. Things that have already
 landed on `patchday/live/2026-04-15` since the last `release/live` promotion:
 
-### Known build issues (deferred to post-refactor cleanup)
+### Build verification (2026-04-30)
 
-The Phase 7 verification build (2026-04-30) failed with two distinct error
-classes. Refactor proceeded; these will be fixed in a separate pass:
+Phase 7 verification build initially failed (C2086 + C2338 errors), root-cause
+diagnosed and fixed:
 
-1. **C2086 redefinition** in `eqlib/include/eqlib/game/PlayerClient.h`:
-   - `LastRangedUsedTime` declared at +0x3cc (MY incorrect forward-port from apr7)
-     AND +0x3f0 (pre-existing correct apr15 RE)
-   - `BearingToTarget` declared at +0x458 (MY incorrect forward-port)
-     AND +0x3fc (pre-existing correct apr15 RE)
-   - Fix: revert commits b444fc2 (forward-port) and 6249f56 (deprecated aliases).
-     Restore `LastSecondaryUseTime` at +0x3cc and `CameraOffset` at +0x458 as
-     they are SEPARATE fields from the apr15-RE-correct ones at higher offsets.
-     Aliases not needed since the rename was wrong.
-
-2. **C2338 static_assert offset mismatches** for several PlayerClient fields
-   (DraggingPlayer @ +0x4b6, SecondaryTintIndex @ +0x4f8, CastingData @ +0x4fc,
-   etc.). Pre-existing offset drift — RegistryAsserts.h has been updated with
-   apr15 offsets but the field padding in PlayerClient.h hasn't been regenerated.
-   Fix: run `tools/playerclient-pad-generator/pad_generator.py` to insert
-   the missing padding bytes so each field lands at its commented offset.
+- **Cause:** apr7→apr15 PlayerClient.h forward-port (commits b444fc2 + 6249f56)
+  renamed `LastSecondaryUseTime` → `LastRangedUsedTime` and `CameraOffset` →
+  `BearingToTarget`, but apr15 already had separate fields with those new
+  names at different offsets. The `__declspec(property)` aliases also shifted
+  struct layout, cascading into `RegistryAsserts.h` static_assert failures.
+- **Fix:** reverted both forward-port commits (170c3e0 + 130123f in eqlib).
+  Field names restored to their apr15-correct identity:
+  +0x3cc=`LastSecondaryUseTime`, +0x3f0=`LastRangedUsedTime` (separate),
+  +0x3fc=`BearingToTarget`, +0x458=`CameraOffset`.
+- **Lesson learned:** when forward-porting renames between patchdays,
+  verify the target branch doesn't already have a field with the new
+  name. Recorded as a methodology guard for future patchday work.
+- **Build verified clean** post-revert: eqlib.dll, MQ2Main.dll, MacroQuest.exe,
+  Actors.exe, plus 20 plugin DLLs. All timestamps 2026-04-30 17:51-17:56.
 
 ## 2026-04-30 — methodology + repo restructure
 
