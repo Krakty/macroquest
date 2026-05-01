@@ -11,7 +11,27 @@ Dates are EQ patchday dates, not commit dates.
 Pending the next patchday or release/* promotion. Things that have already
 landed on `patchday/live/2026-04-15` since the last `release/live` promotion:
 
-- (this section gets populated on each promotion; collected here in advance)
+### Known build issues (deferred to post-refactor cleanup)
+
+The Phase 7 verification build (2026-04-30) failed with two distinct error
+classes. Refactor proceeded; these will be fixed in a separate pass:
+
+1. **C2086 redefinition** in `eqlib/include/eqlib/game/PlayerClient.h`:
+   - `LastRangedUsedTime` declared at +0x3cc (MY incorrect forward-port from apr7)
+     AND +0x3f0 (pre-existing correct apr15 RE)
+   - `BearingToTarget` declared at +0x458 (MY incorrect forward-port)
+     AND +0x3fc (pre-existing correct apr15 RE)
+   - Fix: revert commits b444fc2 (forward-port) and 6249f56 (deprecated aliases).
+     Restore `LastSecondaryUseTime` at +0x3cc and `CameraOffset` at +0x458 as
+     they are SEPARATE fields from the apr15-RE-correct ones at higher offsets.
+     Aliases not needed since the rename was wrong.
+
+2. **C2338 static_assert offset mismatches** for several PlayerClient fields
+   (DraggingPlayer @ +0x4b6, SecondaryTintIndex @ +0x4f8, CastingData @ +0x4fc,
+   etc.). Pre-existing offset drift — RegistryAsserts.h has been updated with
+   apr15 offsets but the field padding in PlayerClient.h hasn't been regenerated.
+   Fix: run `tools/playerclient-pad-generator/pad_generator.py` to insert
+   the missing padding bytes so each field lands at its commented offset.
 
 ## 2026-04-30 — methodology + repo restructure
 
