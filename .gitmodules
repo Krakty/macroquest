@@ -10,7 +10,7 @@
 	url = https://github.com/macroquest/integration-tests.git
 [submodule "src/plugins/MQMCPServer"]
 	path = src/plugins/MQMCPServer
-	url = git@github.com:Krakty/MQMCPServer.git
+	url = https://github.com/Krakty/MQMCPServer.git
 [submodule "src/plugins/MQ2EQBC"]
 	path = src/plugins/MQ2EQBC
-	url = git@github.com:Krakty/MQ2EQBC.git
+	url = https://github.com/Krakty/MQ2EQBC.git
