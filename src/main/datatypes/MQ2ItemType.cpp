@@ -633,7 +633,7 @@ bool MQ2ItemType::GetMember(MQVarPtr VarPtr, const char* Member, char* Index, MQ
 		Dest.Type = pInt64Type;
 		if (pActiveMerchant && pItem->MerchantSlot)
 		{
-			Dest.Int64 = pItem->Price;
+			Dest.Int64 = pItem->GetItemValue(false);   // may11: Price field unresolved, thunk to binary's native value getter
 			return true;
 		}
 		return false;
