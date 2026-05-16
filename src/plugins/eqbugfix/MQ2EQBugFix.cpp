@@ -21,11 +21,11 @@ PreSetup("MQ2EQBugFix");
 // In some cases this will read past the end of the page boundary. If this happens, and the next
 // page isn't allocated, this will result in a crash. The fix is to use strnlen instead, so that
 // the strlen call is properly bounds checked.
-// As of the 5/21/2020 live patch, this happens occasionally when receiving guild names, regardless
+// As of the 5/21/2020 patch, this happens occasionally when receiving guild names, regardless
 // of if MQ2 is loaded.
 #define HAS_CUNSERIALIZEBUFFER_BUG IS_CLIENT_DATE(20200521)
 
-// Not exactly sure when this issue first appeared, but it only happens in the live client. This is
+// Not exactly sure when this issue first appeared, but it only happens in the current client. This is
 // a bad condition that improperly casts a window pointer to another polymorphic type without checking
 // if it is safe. This results in reading memory beyond the end of the structure. In most cases this
 // goes unnoticed because there is more memory adjacent and it just reads junk. In rare cases this will

@@ -20,19 +20,6 @@
             }
         },
         {
-            "name": "live",
-            "displayName": "Live (x64)",
-            "description": "Configuration for live servers (x64 architecture)",
-            "inherits": "base",
-            "architecture": {
-                "value": "x64",
-                "strategy": "set"
-            },
-            "cacheVariables": {
-                "VCPKG_TARGET_TRIPLET": "x64-windows-static"
-            }
-        },
-        {
             "name": "emu",
             "displayName": "Emu (Win32)",
             "description": "Configuration for emu servers (Win32 architecture)",
@@ -43,16 +30,6 @@
             },
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "x86-windows-static"
-            }
-        },
-        {
-            "name": "live-sln",
-            "displayName": "Rebuild Live/Test Solution",
-            "description": "Rebuild the live/test solution for use in Visual Studio",
-            "binaryDir": "${sourceDir}/build/solution",
-            "inherits": "live",
-            "cacheVariables": {
-                "MQ_REGENERATE_SOLUTION": "ON"
             }
         },
         {

@@ -4895,7 +4895,7 @@ protected:
 	void Draw() override
 	{
 		ImGui::LabelText("StrRep Allocations", "%d", eqlib::internal::gStrRepAllocations);
-		ImGui::LabelText("StrRep Live Objects", "%d", eqlib::internal::gStrRepLiveObjects);
+		ImGui::LabelText("StrRep Active Objects", "%d", eqlib::internal::gStrRepActiveObjects);
 
 		ImGui::Text("CXStr FreeLists:");
 

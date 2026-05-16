@@ -43,10 +43,8 @@ char gszTime[32] = __ExpectedVersionTime;
 
 #if defined(EMULATOR)
 int gBuild = static_cast<int>(BuildTarget::Emu);                // EMU (ROF2)
-#elif defined(TEST)
-int gBuild = static_cast<int>(BuildTarget::Test);               // TEST
 #else
-int gBuild = static_cast<int>(BuildTarget::Live);               // LIVE
+int gBuild = static_cast<int>(BuildTarget::Test);               // TEST
 #endif
 
 int gGameState = 0;

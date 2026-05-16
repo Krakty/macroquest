@@ -2594,7 +2594,7 @@ char* ParseSpellEffect(EQ_Spell* pSpell, int i, char* szBuffer, size_t BufferSiz
 		strcat_s(szBuff, FormatPercent(spelleffectname.c_str(), value, finish, szTemp2));
 		break;
 	case SPA_SKILL_INCREASE_CHANCE: //Skill Chance Mod
-	case SPA_ACCURACY: //Chance to hit with Backstab (or throwing/archery [http://lucy.allakhazam.com/spellraw.html?id=9616&source=Live])
+	case SPA_ACCURACY: //Chance to hit with Backstab (or throwing/archery)
 	case SPA_SKILL_DAMAGE_MOD: //Damage Mod (how to tell which, rogues get a backstab only, others get an all skills)
 	case SPA_MIN_DAMAGE_DONE_MOD: //Damage Mod (see above)
 		strcat_s(szBuff, FormatSkills(spelleffectname.c_str(), value, finish, base2, szTemp2));

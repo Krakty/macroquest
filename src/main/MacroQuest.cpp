@@ -51,16 +51,7 @@
 
 #define CLIENT_OVERRIDE 0
 
-#if IS_LIVE_CLIENT
-
-#if !defined(_M_AMD64)
-#error Live build is only for x64
-#endif
-#pragma message("Building MacroQuest for LIVE (x64)")
-#define MacroQuestWinClassName "__MacroQuestTray(Live)"
-#define MacroQuestWinName "MacroQuest(Live)"
-
-#elif IS_TEST_CLIENT
+#if IS_TEST_CLIENT
 
 #if !defined(_M_AMD64)
 #error Test build is only for x64

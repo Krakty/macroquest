@@ -102,7 +102,7 @@ LauncherPostOffice::~LauncherPostOffice()
 void LauncherPostOffice::AddConfiguredHosts()
 {
 	// it does not make sense for this port to be 0 since we are trying to connect to a peer with
-	// a live port, so assume 0 means connect to the same port as this
+	// an active port, so assume 0 means connect to the same port as this
 	const uint16_t default_port = GetPeerPort();
 
 	if (s_iniLocation)

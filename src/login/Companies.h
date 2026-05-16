@@ -268,7 +268,7 @@
 "Psyonix",
 "Punch",
 "Puppet Combo",
-"PVP Live",
+"PVP",
 "Quicksilver",
 "RAD Game Tools",
 "Radiant",
