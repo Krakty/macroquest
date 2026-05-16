@@ -2500,7 +2500,7 @@ public:
 
 				ColumnCheckBox("Click Through", &pWnd->bClickThrough);
 				ColumnCheckBox("Click Through (to background)", &pWnd->bClickThroughToBackground);
-				ColumnCheckBox("Click Through Menu Status", &pWnd->bClickThroughMenuItemStatus);
+				// bClickThroughMenuItemStatus: may11 placement unresolved (no binary trace), see task #317
 				ColumnCheckBox("Click Through Menu Enabled", &pWnd->bShowClickThroughMenuItem);
 
 				ColumnCheckBox("Capture Events from Title", &pWnd->bCaptureTitle);
