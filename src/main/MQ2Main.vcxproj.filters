@@ -66,10 +66,8 @@
     <Filter Include="Header Files\extras\wil">
       <UniqueIdentifier>{398f05d1-d412-4d4d-8554-14f8255af25d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\emu">
       <UniqueIdentifier>{7b5b93b4-0c81-41c2-92f0-45f73d2cc354}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\emu">
       <UniqueIdentifier>{e76cfbc5-b95f-40ca-b940-ffc54cbd169e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -404,8 +402,6 @@
     <ClCompile Include="datatypes\MQSocialType.cpp">
       <Filter>Source Files\datatypes</Filter>
     </ClCompile>
-    <ClCompile Include="emu\EmuExtensions.cpp">
-      <Filter>Source Files\emu</Filter>
     </ClCompile>
     <ClCompile Include="MQRenderDoc.cpp">
       <Filter>Source Files</Filter>
@@ -643,8 +639,6 @@
     <ClInclude Include="..\..\include\mq\api\DetourAPI.h">
       <Filter>Header Files\mq\api</Filter>
     </ClInclude>
-    <ClInclude Include="emu\EmuExtensions.h">
-      <Filter>Header Files\emu</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\mq\base\ScopeExit.h">
       <Filter>Header Files\mq\base</Filter>

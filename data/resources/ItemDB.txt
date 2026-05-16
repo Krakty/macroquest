@@ -312,7 +312,7 @@
 51783	1	Bottle of Adventure III
 51971	1	Special Potion of Amnesia
 51972	1	Special Potion of Disgenderment
-51980	232	Stone of Beta Adventuring
+51980	232	Stone of Test Adventuring
 52199	20	Warm Milk
 52622	1	Sketch of the Reliquary
 52623	1	Sketch of the Scale of Veeshan

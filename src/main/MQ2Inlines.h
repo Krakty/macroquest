@@ -522,7 +522,7 @@ inline bool CanTank(int Class)
 
 inline const char* GetSpellString(int ID, int SpellIndex)
 {
-	// FIXME: emu - move this to eqlib
+	// FIXME: ROF2 (legacy) - move this to eqlib
 #if defined(pinstEQSpellStrings_x)
 	if (pEQSpellStrings)
 	{

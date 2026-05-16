@@ -3198,7 +3198,7 @@ public:
 				ImGui::TableNextColumn(); ImGui::SetNextItemWidth(-1); ImGui::Checkbox("##DevServer", &eq.bIsDevServer);
 
 				ImGui::TableNextRow();
-				ImGui::TableNextColumn(); ImGui::Text("Beta Server");
+				ImGui::TableNextColumn(); ImGui::Text("Server");
 				ImGui::TableNextColumn(); ImGui::SetNextItemWidth(-1); ImGui::Checkbox("##BetaServer", &eq.bIsBetaServer);
 
 				ImGui::TableNextRow();

@@ -51,34 +51,12 @@
 
 #define CLIENT_OVERRIDE 0
 
-#if IS_TEST_CLIENT
-
 #if !defined(_M_AMD64)
 #error Test build is only for x64
 #endif
 #pragma message("Building MacroQuest for TEST (x64)")
 #define MacroQuestWinClassName "__MacroQuestTray(Test)"
 #define MacroQuestWinName "MacroQuest(Test)"
-
-#elif IS_BETA_CLIENT
-
-#if !defined(_M_AMD64)
-#error Beta build is only for x64
-#endif
-#pragma message("Building MacroQuest for BETA (x64)")
-#define MacroQuestWinClassName "__MacroQuestTray(Beta)"
-#define MacroQuestWinName "MacroQuest(Beta)"
-
-#elif IS_EMU_CLIENT
-
-#if defined(_M_AMD64)
-#error Emulator Build is only for x86
-#endif
-#pragma message("Building MacroQuest for EMULATOR (x86)")
-#define MacroQuestWinClassName "__MacroQuestTray(EQEmu)"
-#define MacroQuestWinName "MacroQuest(EQEmu)"
-
-#endif
 
 namespace fs = std::filesystem;
 using namespace std::chrono_literals;
@@ -102,9 +80,6 @@ MQModule* GetSpawnsModule();
 MQModule* GetItemsModule();
 MQModule* GetWindowsModule();
 MQModule* GetPostOfficeModule();
-#if IS_EMU_CLIENT
-MQModule* GetEmuExtensionsModule();
-#endif
 MQModule* GetDisplayHookModule();
 MQModule* GetMemDumpModule();
 
@@ -845,9 +820,6 @@ void MacroQuest::Initialize()
 	AddInternalModule(GetPostOfficeModule());
 	AddInternalModule(GetDisplayHookModule());
 	AddInternalModule(GetMemDumpModule());
-#if IS_EMU_CLIENT
-	AddInternalModule(GetEmuExtensionsModule());
-#endif
 	InitializeMQ2AutoInventory();
 	InitializeMQ2KeyBinds();
 	InitializePlugins();

@@ -1320,7 +1320,7 @@ int GetCurrencyIDByName(const char* szName)
 	return -1;
 }
 
-// This wrapper is here to deal with older plugins and to preserve backwards compatibility with older clients (emu)
+// This wrapper is here to deal with older plugins and to preserve backwards compatibility with older clients
 CAltAbilityData* GetAAById(int nAbilityId, int playerLevel)
 {
 	return pAltAdvManager->GetAAById(nAbilityId, playerLevel);
@@ -5089,7 +5089,7 @@ int GetHighestAvailableBagSlot()
 	int highestInvSlot = InvSlot_LastBonusBagSlot;
 
 	// GM accounts do not hide inventory slots based on expansion
-	// This is (most likely) only valid for Emu
+	
 	if (pLocalPC->bGM)
 		return highestInvSlot;
 
@@ -7524,7 +7524,6 @@ static bool IsLauncherExtra(std::string_view path)
 		"EQBC",
 		"RedGuides",
 		"MMOBugs",
-		"EQEmu",
 		"\\ida.exe"
 	};
 

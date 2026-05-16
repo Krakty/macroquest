@@ -17,9 +17,7 @@
 namespace mq {
 
 enum class BuildTarget : int {
-	Test = 2,
-	Beta = 3,
-	Emu  = 4
+	Test = 1
 };
 
 inline const char* GetBuildTargetName(BuildTarget id)
@@ -27,8 +25,6 @@ inline const char* GetBuildTargetName(BuildTarget id)
 	switch(id)
 	{
 		case BuildTarget::Test: return "Test";
-		case BuildTarget::Beta: return "Beta";
-		case BuildTarget::Emu:  return "Emu";
 	}
 	return "unknown";
 }

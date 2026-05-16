@@ -1430,7 +1430,7 @@ void ImGuiManager_OverlaySettings()
 
 	ImGui::SameLine();
 	mq::imgui::HelpMarker("The viewports feature allows ImGui windows to be dragged out of the window into "
-		"their own floating windows. This feature is BETA quality and has some known issues.\n"
+		"their own floating windows. This feature is in-progress quality and has some known issues.\n"
 		"\n"
 		"Viewports are disabled when running in full screen mode.");
 

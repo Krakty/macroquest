@@ -29,12 +29,7 @@ struct CaseInsensitiveLess
 	}
 };
 
-// Probably move these to eqlib but for now these are all contained within MQ
-#if defined(EMULATOR)
-#define HAS_CHAT_TIMESTAMPS 1
-#else
 #define HAS_CHAT_TIMESTAMPS 0
-#endif
 
 namespace mq {
 

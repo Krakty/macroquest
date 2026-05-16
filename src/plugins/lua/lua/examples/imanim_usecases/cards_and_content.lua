@@ -186,7 +186,7 @@ local swipe_cards_state = {
     swipe_rotation = 0.0,
     swiping = false,
     swipe_x_id = ImHashStr('swipe_x_progress'),
-    card_titles = { 'Project Alpha', 'Design Beta', 'Code Gamma', 'Launch Delta' },
+    card_titles = { 'Project Alpha', 'Design Phase 2', 'Code Gamma', 'Launch Delta' },
     card_descs = { 'Innovation awaits', 'Creative vision', 'Build the future', 'Ship it!' },
     card_colors = {
         IM_COL32(91, 194, 231, 255),

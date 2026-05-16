@@ -389,16 +389,6 @@ void Cmd_SwitchServer(SPAWNINFO* pChar, char* szLine)
 		return;
 	}
 
-#if IS_EMU_CLIENT
-	auto server_names = login::db::ListServers().vector();
-
-	// this is just a validity check, that's the only reason we have that set of server names
-	if (std::find_if(begin(server_names), end(server_names), [&szServer](std::string_view s) { return ci_equals(s, szServer); }) == server_names.end())
-	{
-		WriteChatf("\ar[AutoLogin]\ax Invalid server name \ag%s\ax. Valid server names are:", szServer);
-		WriteChatColor(join(server_names, ", ").c_str());
-	}
-#else
 	// this is just a validity check, that's the only reason we have that set of server names
 	if (GetServerIDFromServerName(szServer) == ServerID::Invalid)
 	{
@@ -410,7 +400,6 @@ void Cmd_SwitchServer(SPAWNINFO* pChar, char* szLine)
 
 		WriteChatColor(join(server_names, ", ").c_str());
 	}
-#endif
 	else if (GetGameState() == GAMESTATE_INGAME && pChar
 		&& ci_equals(GetServerShortName(), szServer)
 		&& ci_equals(pChar->DisplayedName, szCharacter))

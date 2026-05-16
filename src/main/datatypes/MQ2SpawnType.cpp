@@ -1209,13 +1209,13 @@ bool MQ2SpawnType::GetMember(SPAWNINFO* pSpawn, const char* Member, char* Index,
 		return false;
 
 	case SpawnMembers::MercID:
-		// FIXME: ROF2 emu does not have MercID
+		// FIXME: ROF2 (legacy) does not have MercID
 		Dest.DWord = pSpawn->MercID;
 		Dest.Type = pIntType;
 		return true;
 
 	case SpawnMembers::ContractorID:
-		// FIXME: ROF2 emu does not have ContractorID
+		// FIXME: ROF2 (legacy) does not have ContractorID
 		Dest.DWord = pSpawn->ContractorID;
 		Dest.Type = pIntType;
 		return true;

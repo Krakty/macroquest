@@ -41,11 +41,7 @@ ePVPServer PVPServer = PVP_NONE;
 char gszVersion[32] = __ExpectedVersionDate;
 char gszTime[32] = __ExpectedVersionTime;
 
-#if defined(EMULATOR)
-int gBuild = static_cast<int>(BuildTarget::Emu);                // EMU (ROF2)
-#else
-int gBuild = static_cast<int>(BuildTarget::Test);               // TEST
-#endif
+int gBuild = static_cast<int>(BuildTarget::Test);
 
 int gGameState = 0;
 bool gAnonymize = false; // Deprecate

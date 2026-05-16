@@ -1800,7 +1800,7 @@ static void ShowUsecase_SwipeCards()
 		IM_COL32(20, 22, 30, 255), 4.0f);
 
 	// Card data
-	const char* card_titles[] = { "Project Alpha", "Design Beta", "Code Gamma", "Launch Delta" };
+	const char* card_titles[] = { "Project Alpha", "Design Phase 2", "Code Gamma", "Launch Delta" };
 	const char* card_descs[] = { "Innovation awaits", "Creative vision", "Build the future", "Ship it!" };
 	ImU32 card_colors[] = {
 		IM_COL32(91, 194, 231, 255),

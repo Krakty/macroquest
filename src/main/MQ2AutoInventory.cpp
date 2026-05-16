@@ -588,7 +588,7 @@ public:
 												}
 												else
 												{
-													// FIXME: emu
+													// FIXME: ROF2 (legacy)
 													WriteChatf("[%d] Marking %s as Never Loot", i, ptr->GetName());
 													if (pLootFiltersManager)
 													{

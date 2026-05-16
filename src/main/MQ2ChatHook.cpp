@@ -310,7 +310,7 @@ void TimeStampChat(PlayerClient* pChar, char* szLine)
 	WritePrivateProfileBool("MacroQuest", "TimeStampChat", gbTimeStampChat, mq::internal_paths::MQini);
 }
 
-// TODO: When non-emu has settings, pull this out of the ifdef block
+// TODO: pull this out of the ifdef block
 void ChatSettingsPannel()
 {
 	if (ImGui::Checkbox("Show Timestamps in Chat", &gbTimeStampChat))

@@ -505,7 +505,6 @@ static void HookMemChecker(bool Patch)
 
 void InitializeDetours()
 {
-#if !defined(EMULATOR)
 	// hit the debugger if we don't hook this. take no chances
 	if (!__MemChecker0
 		|| !__MemChecker1
@@ -516,16 +515,13 @@ void InitializeDetours()
 	{
 		__debugbreak();
 	}
-#endif
 
 	extern_array0 = reinterpret_cast<uint32_t*>(__EncryptPad0);
 
-#if !defined(EMULATOR)
 	AddHook(__MemChecker0, memcheck0, memcheck0_tramp);
 	AddHook(__MemChecker1, memcheck1, memcheck1_tramp);
 #if defined(__MemChecker4_x)
 	AddHook(__MemChecker4, memcheck4, memcheck4_tramp);
-#endif
 #endif
 	AddHook(__decompress_block, decompress_block_detour, decompress_block_trampoline);
 
