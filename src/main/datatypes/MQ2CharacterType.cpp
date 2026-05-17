@@ -185,7 +185,7 @@ enum class CharacterMembers
 	HeroicDEXBonus,
 	HeroicSTABonus,
 	HeroicCHABonus,
-	HealAmountBonus,
+	AC,
 	SpellDamageBonus,
 	ClairvoyanceBonus,
 	EnduranceRegenBonus,
@@ -531,7 +531,8 @@ MQ2CharacterType::MQ2CharacterType() : MQ2Type("character")
 	ScopedTypeMember(CharacterMembers, HeroicDEXBonus);
 	ScopedTypeMember(CharacterMembers, HeroicSTABonus);
 	ScopedTypeMember(CharacterMembers, HeroicCHABonus);
-	ScopedTypeMember(CharacterMembers, HealAmountBonus);
+	ScopedTypeMember(CharacterMembers, AC);
+	AddMember(static_cast<int>(CharacterMembers::AC), "HealAmountBonus"); // backwards-compat alias for pre-may11 macros (rename: HealAmountBonus → AC; runtime verified)
 	ScopedTypeMember(CharacterMembers, SpellDamageBonus);
 	ScopedTypeMember(CharacterMembers, ClairvoyanceBonus);
 	ScopedTypeMember(CharacterMembers, EnduranceRegenBonus);
@@ -1164,8 +1165,8 @@ bool MQ2CharacterType::GetMember(MQVarPtr VarPtr, const char* Member, char* Inde
 		Dest.Type = pIntType;
 		return true;
 
-	case CharacterMembers::HealAmountBonus:
-		Dest.DWord = pLocalPC->HealAmountBonus;
+	case CharacterMembers::AC:
+		Dest.DWord = pLocalPC->AC;
 		Dest.Type = pIntType;
 		return true;
 
