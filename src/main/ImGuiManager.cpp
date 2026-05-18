@@ -913,6 +913,15 @@ void ImGuiManager_DrawFrame()
 	{
 		if (IsPluginSystemInitialized())
 		{
+			// [ImGuiDiag] log first plugin dispatch + count
+			static bool s_loggedPluginDispatch = false;
+			if (!s_loggedPluginDispatch)
+			{
+				int cnt = 0; int hasUI = 0;
+				for (MQPlugin* p = pPlugins; p; p = p->pNext) { cnt++; if (p->UpdateImGui) hasUI++; }
+				DebugSpewAlways("[ImGuiDiag] ImGuiManager_DrawFrame dispatch: total_plugins=%d plugins_with_UpdateImGui=%d", cnt, hasUI);
+				s_loggedPluginDispatch = true;
+			}
 			MQScopedBenchmark bm2(bmPluginsUpdateImGui);
 
 			MQPlugin* pPlugin = pPlugins;

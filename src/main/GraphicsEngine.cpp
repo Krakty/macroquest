@@ -231,6 +231,9 @@ public:
 	DETOUR_TRAMPOLINE_DEF(void, Render_Trampoline, (bool, bool))
 	void Render_Detour(bool postProcessing, bool blind)
 	{
+		// [ImGuiDiag] log first time hook fires
+		static bool s_loggedHookFires = false;
+		if (!s_loggedHookFires) { DebugSpewAlways("[ImGuiDiag] C2DPrimitiveManager::Render_Detour FIRED first time (postProcessing=%d)", postProcessing); s_loggedHookFires = true; }
 		if (!postProcessing)
 		{
 			RenderDoc_ScopedEvent e(MQColor(170, 255, 255), L"Render UI");
@@ -247,7 +250,7 @@ public:
 			{
 				s_gfxEngine->PostUpdateScene();
 			}
-		
+
 		}
 	}
 #endif
@@ -491,6 +494,26 @@ void MQGraphicsEngine::UpdateScene_Internal()
 
 void MQGraphicsEngine::PostUpdateScene()
 {
+	// [ImGuiDiag] log gate values on first entry and when they change
+	static bool s_loggedOnce = false;
+	static bool s_lastDevAcq = false, s_lastImguiR = false, s_lastNeedReset = false, s_lastRenderImGui = false;
+	static int s_lastGameState = -999;
+	if (!s_loggedOnce
+		|| s_lastDevAcq != m_deviceAcquired
+		|| s_lastImguiR != m_imguiReady
+		|| s_lastNeedReset != m_needResetOverlay
+		|| s_lastRenderImGui != gbRenderImGui
+		|| s_lastGameState != gGameState)
+	{
+		DebugSpewAlways("[ImGuiDiag] PostUpdateScene gates: m_deviceAcquired=%d m_imguiReady=%d m_needResetOverlay=%d gbRenderImGui=%d gGameState=%d",
+			(int)m_deviceAcquired, (int)m_imguiReady, (int)m_needResetOverlay, (int)gbRenderImGui, (int)gGameState);
+		s_lastDevAcq = m_deviceAcquired;
+		s_lastImguiR = m_imguiReady;
+		s_lastNeedReset = m_needResetOverlay;
+		s_lastRenderImGui = gbRenderImGui;
+		s_lastGameState = gGameState;
+		s_loggedOnce = true;
+	}
 	if (m_deviceAcquired && m_imguiReady && !m_needResetOverlay)
 	{
 		if (gGameState != GAMESTATE_LOGGINGIN
@@ -506,6 +529,9 @@ void MQGraphicsEngine::PostUpdateScene()
 
 void MQGraphicsEngine::ImGui_DrawFrame()
 {
+	// [ImGuiDiag] log first time drawframe fires
+	static bool s_loggedDrawFrame = false;
+	if (!s_loggedDrawFrame) { DebugSpewAlways("[ImGuiDiag] ImGui_DrawFrame entered (about to dispatch plugin OnUpdateImGui)"); s_loggedDrawFrame = true; }
 	// we can't expect that the rounding mode is valid, and imgui respects the rounding mode so set it here and ensure that we reset it before the return
 	auto round = fegetround();
 	fesetround(FE_TONEAREST);
