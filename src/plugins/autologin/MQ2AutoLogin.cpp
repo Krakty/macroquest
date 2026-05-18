@@ -981,13 +981,9 @@ PLUGIN_API void ShutdownPlugin()
 
 void SendWndNotification(CXWnd* pWnd, CXWnd* sender, uint32_t msg, void* data)
 {
-#if HAS_GAMEFACE_UI
-	if (GetGameState() == GAMESTATE_PRECHARSELECT)
-		reinterpret_cast<eqlib::eqmain::CXWnd*>(pWnd)->WndNotification(
-			reinterpret_cast<eqlib::eqmain::CXWnd*>(sender), msg, data);
-	else
-#endif
-		pWnd->WndNotification(sender, msg, data);
+	// eqmain::CXWnd is aliased to eqlib::CXWnd as of may11-test; the
+	// PRECHARSELECT branch was a no-op reinterpret_cast and is no longer needed.
+	pWnd->WndNotification(sender, msg, data);
 }
 
 CXStr GetWindowText(CXWnd* pWnd)
@@ -1002,7 +998,7 @@ CXStr GetWindowText(CXWnd* pWnd)
 	{
 		return type == UI_STMLBox
 			? reinterpret_cast<eqlib::eqmain::CStmlWnd*>(pWnd)->STMLText
-			: reinterpret_cast<eqlib::eqmain::CXWnd*>(pWnd)->GetWindowText();
+			: pWnd->GetWindowText();  // eqmain::CXWnd is aliased to eqlib::CXWnd, no cast needed
 	}
 #endif
 

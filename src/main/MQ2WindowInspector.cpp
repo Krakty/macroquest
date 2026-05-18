@@ -2061,7 +2061,8 @@ public:
 		if (GetGameState() == GAMESTATE_PRECHARSELECT)
 		{
 			// Trying to support all of this just for login is nuts.
-			DisplayCXWndProperties(reinterpret_cast<eqlib::eqmain::CXWnd*>(m_window));
+			// eqmain::CXWnd aliased to eqlib::CXWnd (may11-test): cast removed.
+			DisplayCXWndProperties(m_window);
 			m_table.End();
 			return;
 		}
